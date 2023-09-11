@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/project_footer.css">
+    <link rel="stylesheet" href="/css/project_header.css">
+    <link rel="stylesheet" href="/css/project_login.css">
+    <title>세탁신청</title>
+    <script src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js" charset="utf-8"></script>
+    <script></script>
+
+</head>
+<header th:replace="~{/common/project_header :: header}"></header>
+<body>
+    <div class='container'>
+        <form class='login_form' method="post" action="/login/loginAction">
+            <div class='login_logo'>
+                로고자리
+            </div>
+            <div class='login_box_id'>
+                <h5>아이디</h5>
+                <input type="text" name="memberAccount"  th:value="${memberAccount}">
+            </div>
+            <div class='login_box_pw'>
+                <h5>비밀번호</h5>
+                <input type="password" maxlength='15' name="memberPassword">
+            </div>
+            <div class="errorMsg"> [[${errorMsg}]]</div>
+            <div class='login_button'>
+                <input type="submit" value="로그인">
+            </div>
+            
+            <div class='login_look'>
+                <div><a href="/register">회원가입</a></div>
+                <div><a href="/login/find-account">아이디 찾기</a></div>
+                <div><a href="#">비밀번호 찾기</a></div>
+            </div>
+            <div class='login_social_login'>
+                <button type="button" class="login_naver" onclick="location.href='https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=1zyMGeTLflNJkh2bmICN&state=1234&redirect_uri=http://localhost:8080/login/naver_callback'">네이버 로그인</button>
+                <button type="button" class='login_kakao' onclick="location.href='https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=6ceec1b5aece169e4582fd82601abd44&redirect_uri=http://localhost:8080/login/kakaoLogin'"> 카카오 로그인</button>
+                <span th:text="${body}"></span>
+            </div>
+        </form>
+    </div>
+</body>
+<footer th:replace="~{/common/project_footer :: footer}"> </footer>
+</html>

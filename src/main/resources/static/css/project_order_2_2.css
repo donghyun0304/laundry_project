@@ -1,0 +1,61 @@
+h2{
+    margin: 1rem 0;
+}
+.explain{
+    width: 100%;
+    height: 6rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    color: #666;
+
+}
+.imglist{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.imgbox svg{
+    margin: 0 auto;
+    fill: var(--border-color);
+}
+
+.imgbox{
+    width: calc(100% / 3 - 0.5rem);
+    height: calc(100% /3 - 0.5rem);
+    border: 1px solid #e9e9e9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--border-color);
+    margin: 0;
+}
+
+#required{
+    width: 100%;
+    height: 3rem;
+    padding: 1rem;
+    font-size: 1.1rem;
+    outline: none;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+input[type=submit]{
+    bottom: 4.5rem;
+    left: 1rem;
+    width: calc(100% - 2rem);
+    position: fixed;
+}
+body{
+    margin-bottom: clamp(9rem, 3vw, 10rem); /* 푸터의 height 만큼 margin을 주어야지 스크롤이 가능하다. */
+}
+
+.banner{
+    width: 100%;
+    height: 7rem;
+    border-radius: var(--border-radius);
+    border: 1px solid black; /* 삭제 후 사용할 것*/
+}

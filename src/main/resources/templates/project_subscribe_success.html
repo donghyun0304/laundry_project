@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/project_footer.css">
+    <link rel="stylesheet" href="/css/project_header.css">
+    <link rel='stylesheet' href='/css/project_subscribe_success.css'>
+    <title>구독완료</title>
+</head>
+<header th:replace="~{/common/project_header :: header}"></header>
+<body>
+<div class='container'>
+    <div class='title'>구독 완료</div>
+
+    <div class='breakdown-wrap'>
+        <div class='breakdown-container'>
+            <div>구독권</div>
+            <div>1개월</div>
+        </div>
+        <div class='breakdown-container'>
+            <div>구독만기일</div>
+            <div>24/08/25</div>
+        </div>
+        <div class='breakdown-container'>
+            <div>결제금액</div>
+            <div>4500원</div>
+        </div>
+    </div>
+
+    <div class='comment'>한 번 사용해보세요!</div>
+
+    <button class='goLaundry'>세탁하러가기</button>
+
+    <button class='check'>확인</button>
+</div>
+
+<footer th:replace="~{/common/project_footer :: footer}"> </footer>
+
+</body>
+</html>

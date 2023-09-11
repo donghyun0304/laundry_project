@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!-- sock js -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.2/sockjs.min.js"></script>
+    <!-- STOMP -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script>
+      window.addEventListener('load', function() {
+
+        const pathArr = location.pathname.split("/");
+        const storeId = pathArr[pathArr.length-1];
+        console.log(pathArr);
+        console.log(storeId);
+
+        $(document).ready(function(){
+            $(".btn").click(function(){
+                alert('주문이 완료되었습니다.');
+                location.href = "/oo/kk/" + storeId;
+
+                let socket = new SockJS('/websocket');
+
+                let stompClient = Stomp.over(socket);
+
+                stompClient.connect({}, function() {
+                    const message = {
+                        message : "새 주문이 들어왔습니다"
+                }
+                    stompClient.send("/message/order-complete-message/" + storeId, {}, JSON.stringify(message));
+                    stompClient.disconnect();
+                });
+            });
+
+
+
+            var formData = '';
+            $('#orderForm').submit(function(event) {
+                event.preventDefault(); // 폼 제출 기본 동작 방지
+
+                var orderId = $('#orderId').val();
+                var memberId = $('#memberId').val();
+
+                console.log(orderId);
+                console.log(memberId);
+
+                formData = $(this).serialize();
+            });
+
+            $('#sub').click(function(){
+                $('#orderForm').submit();
+                console.log(formData);
+
+<!--                let socket = new SockJS('/websocket');-->
+
+<!--                let stompClient = Stomp.over(socket);-->
+
+<!--                stompClient.connect({}, function() {-->
+<!--                    const message = {-->
+<!--                        message : "새 주문 등록"-->
+<!--                    }-->
+<!--                    stompClient.send("/message/order-complete-message/" + storeId, {}, JSON.stringify(message));-->
+<!--                    stompClient.disconnect();-->
+<!--                });-->
+            });
+        });
+
+        // 관리자 페이지로 주문요청 메세지
+        function messageSend() {
+            let socket = new SockJS('/websocket');
+
+            let stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, function() {
+                const message = {
+                    message : "새 주문이 들어왔습니다"
+                }
+                stompClient.send("/message/order-complete-message/" + storeId, {}, JSON.stringify(message));
+
+                 const messageBody = JSON.parse(message.body);
+
+<!--                // 여기서 원하는 처리를 수행-->
+<!--                const orders = messageBody.a;-->
+<!--                const orderId = orders.ordersId; // 서버에서 받은 주문 ID-->
+
+<!--                // HTML 요소에 값을 적용 (예시)-->
+<!--                $("#orderStatus").text("주문 완료 - 주문 ID: " + orderId);-->
+<!--                   $("#aa").text(storeId);-->
+
+		        stompClient.disconnect();
+            });
+        }
+      });
+    </script>
+</head>
+<body>
+  <form action="" id="orderForm">
+    주문번호 : <input type="text" id='orderId' name='orderId' value='20'><br>
+    회원번호 : <input type="text" id='memberId' name='memberId' value='63'><br>
+    주문날짜 : <input type="text" id='ordersDate' name='ordersDate' value=''><br>
+    주소 : <input type="text" id='ordersAddress' name='ordersAddress' value='서울 서대문구 이화여대길 50-12'><br>
+    주소 상세보기 : <input type="text" id='ordersAddressDetails' name='ordersAddressDetails' value='102동 333호'><br>
+    주문정보 : <input type="text" id='ordersInfo' name='ordersInfo' value=''><br>
+    요청사항 : <input type="text" id='ordersRequest' name='ordersRequest' value=''><br>
+    결제방법 : <input type="text" id='ordersPay' name='ordersPay' value='2'><br>
+    픽업장소 : <input type="text" id='ordersPickup' name='ordersPickup' value='문앞'><br>
+    최초금액 : <input type="text" id='ordersExpectedPrice' name='ordersExpectedPrice' value='12000'><br>
+    최종금액 : <input type="text" id='ordersFinalPrice' name='ordersFinalPrice' value='12000'><br>
+    진행상태 : <input type="text" id='ordersPayStatus' name='ordersPayStatus' value='2'><br>
+    기사 : <input type="text" id='riderId' name='riderId' value=''><br>
+    빠른배송 : <input type="text" id='quickRiderId' name='quickRiderId' value=''><br>
+    <input type="submit" value="주문하기" id="sub" class="sub">
+  </form>
+  <hr>
+      <input type="button" value="버튼클릴기리리리리리리리리" id="btn" class="btn">
+</body>
+</html>

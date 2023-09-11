@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/project_footer.css">
+    <link rel="stylesheet" href="/css/project_header.css">
+    <link rel='stylesheet' href='/css/project_subscribe_choice.css'>
+
+    <!-- user-scalable 을 사용하지 않는 디바이스를 위해, maximun-scale/minimum-scale 설정을 하는 것입니다-->
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+
+    <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+<!--    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>-->
+
+    <script>
+
+        let selectMonth = 0;
+        let totalPrice = 0;
+        let productName = '';
+
+        function selectSubscribe(month, price) {
+            const btnPay = document.querySelector('#btnPay');
+
+            totalPrice = (month * price);
+            selectMonth = month;
+            productName = month + '개월 구독권'
+
+            btnPay.classList.remove('hidden');
+            btnPay.innerText = month + '개월 ' + totalPrice.toLocaleString('ko-KR');
+        }
+        // 결제
+        IMP.init('imp50315416');
+        function preparePay() {
+            if(selectMonth == 0) {
+                alert("구독 개월수를 선택해주세요.");
+                return;
+            }
+
+            let customer_uid = document.querySelector('#memberId').value;
+            let merchant_uid = customer_uid+"_subscribe_"+formatDate(new Date());
+
+            fetch('/payments/prepare', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    member_id: customer_uid,
+                    select_month: selectMonth,
+                    merchant_uid: merchant_uid,
+                    customer_uid: customer_uid,
+                    amount: totalPrice,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result==='success') {
+                        // 성공할 경우
+                        requestPay(customer_uid, merchant_uid);
+                    } else {
+                        // 실패할 경우
+                        alert("잘못된 접근입니다.");
+                    }
+                });
+        }
+
+        function requestPay(customer_uid, merchant_uid) {
+            IMP.request_pay({
+                pg : "kakaopay.TCSUBSCRIP", // 실제 계약 후에는 실제 상점아이디로 변경
+                pay_method : 'card', // 'card'만 지원됩니다.
+                merchant_uid: merchant_uid, // 상점에서 관리하는 주문 번호
+                name : productName,
+                amount : totalPrice, // 결제창에 표시될 금액. 실제 승인이 이루어지지는 않습니다. (모바일에서는 가격이 표시되지 않음)
+                customer_uid : customer_uid, // 필수 입력.
+                m_redirect_url : 'https://8162-183-96-143-101.ngrok-free.app/payments/mobile'
+                //m_redirect_url : 'http://localhost:8080/payments/mobile' // 모바일에서 결제 완료 후 리디렉션 될 URL 예: https://www.my-service.com/payments/complete/mobile
+            }, function(rsp) {
+                if ( rsp.success ) {
+                    fetch('/payments', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            member_id: customer_uid,
+                            select_month: selectMonth,
+                            merchant_uid: merchant_uid,
+                            customer_uid: customer_uid,
+                            amount: totalPrice,
+                            imp_uid: rsp.imp_uid
+                        }),
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("결제테스트");
+                            if (data.success) {
+                                // pc결제 성공할 경우
+                                //window.location.href='/subscription/confirm'
+                                // fetch('/api/auth/logout')
+                                //     .then(response => response.json())
+                                //     .then(data => {
+                                //         if (data.success) {
+                                //             alert('구독신청이 완료되었습니다. 다시 로그인해주세요.');
+                                //             window.location.href = '/';
+                                //         }
+                                //     });
+                            } else {
+                                // 실패 처리
+                            }
+                        });
+                }
+                else {
+                    let msg = '빌링키 발급 실패.\n';
+                    msg+=rsp.error_msg;
+                    alert(msg);
+                }
+            });
+        }
+
+
+        function formatDate(date) {
+            var year = date.getFullYear();
+            var month = ('0' + (date.getMonth() + 1)).slice(-2);
+            var day = ('0' + date.getDate()).slice(-2);
+            var hours = ('0' + date.getHours()).slice(-2);
+            var minutes = ('0' + date.getMinutes()).slice(-2);
+            var seconds = ('0' + date.getSeconds()).slice(-2);
+            var milliseconds = ('00' + date.getMilliseconds()).slice(-3);
+
+            return year + '_' + month + '_' + day + '_' + hours + minutes + seconds + milliseconds;
+        }
+
+        function terms(){
+            console.log("이용약관표시");
+        }
+    </script>
+</head>
+<header th:replace="~{/common/project_header :: header}"></header>
+<body>
+<div class='container'>
+    <input type="text" th:value="${session.memberId}" id="memberId">
+    <div class='subscribe-choice-title'>구독권 선택</div>
+
+    <div class='subscribe-right' onclick="selectSubscribe(1, 5900)">
+        <div>1개월</div>
+        <div>월 5900원</div>
+    </div>
+    <div class='subscribe-right' onclick="selectSubscribe(3, 4900)">
+        <div>3개월</div>
+        <div>월 4900원</div>
+
+    </div>
+    <div class='subscribe-right' onclick="selectSubscribe(6, 4500)">
+        <div>6개월</div>
+        <div>월 4500원</div>
+    </div>
+    <div class='subscribe-right' onclick="selectSubscribe(12, 4100)">
+        <div>12개월</div>
+        <div>월 4100원</div>
+    </div>
+
+    <!-- * 신규결제일경우에 표시 * -->
+    <div class='payment-container'>
+        <div>신규회원</div>
+        <div>첫 1개월 무료 적용</div>
+    </div>
+
+    <div class='price hidden' id="btnPay"></div>
+
+    <div class='view-terms-container'>
+        <div class='terms-check-container'>
+            <input type='radio' id='terms_check' value="Y">
+            <label for='terms_check'>이용약관에 동의합니다.</label>
+            <a class='view-terms' href='#' onclick="terms()">구독권 이용약관 보기</a>
+        </div>
+    </div>
+
+    <!--  로그인 안했으면 로그인 페이지로 -->
+    <input type="button" class='pay' onclick="preparePay()" value="결제하기"/>
+</div>
+</body>
+
+<footer th:replace="~{/common/project_footer :: footer}"> </footer>
+
+</html>

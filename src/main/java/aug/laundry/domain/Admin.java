@@ -15,6 +15,7 @@ public class Admin {
     private String adminName;
     private Integer adminPhone;
 
+
     public Admin() {
     }
 }

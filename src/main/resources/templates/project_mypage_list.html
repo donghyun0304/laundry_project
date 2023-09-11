@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/project_footer.css">
+    <link rel="stylesheet" href="/css/project_header.css">
+    <link rel="stylesheet" href="/css/project_mypage_list.css">
+    <script src="/js/project_footer.js"></script>
+    <title>Document</title>
+</head>
+<header th:replace="~{/common/project_header :: header}"></header>
+<body>
+
+<div class='container'>
+    <div class='mypage_nickname'>
+        <th:block th:if="${userPass!=null}">
+            <span th:text="${userName}+'님'"></span>
+            <div th:text="${userPass}">Pass</div>
+        </th:block>
+        <th:block th:if="${userPass==null}">
+            <span th:text="${userName}+'님'"></span>
+        </th:block>
+    </div>
+    <ul>
+        <a href='/subscription'>
+            <li class='mypagePass'>PASS
+                <p>세탁패스 구매하기</p><br>
+                <p>무제한 세탁 할인, 무제한 포인트 적립</p>
+            </li>
+            <span>▶</span>
+
+        </a>
+        <a href='./coupons'>
+            <li>쿠폰</li>
+            <span>▶</span>
+        </a>
+        <a href='./points'>
+            <li>포인트</li>
+            <span>▶</span>
+        </a>
+        <a href='./update'>
+            <li>내정보 설정</li>
+            <span>▶</span>
+        </a>
+        <a href='./invite'>
+            <li>친구초대</li>
+            <span>▶</span>
+        </a>
+        <a href=''>
+            <li>이용안내</li>
+            <span>▶</span>
+        </a>
+        <a href=''>
+            <li>로그아웃</li>
+            <span>▶</span>
+        </a>
+    </ul>
+</div>
+
+</body>
+<footer th:replace="~{/common/project_footer :: footer}"> </footer>
+</html>

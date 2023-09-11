@@ -17,6 +17,7 @@ public class Rider {
     private Integer riderZipcode;
     private String riderAddress;
     private String riderPossibleZipcode;
+    private String workingArea;
 
     public Rider() {
     }

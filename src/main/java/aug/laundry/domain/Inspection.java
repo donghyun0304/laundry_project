@@ -12,6 +12,7 @@ public class Inspection {
     private Long inspectionId;
     private Long adminId;
     private char inspectionStatus;
+    private Long ordersId;
 
     public Inspection() {
     }

@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class TestController {
 
     private final TestMapper testMapper;
-    @GetMapping("/test")
-    public String test(Model model) {
-
-        int result = testMapper.find();
-        log.info("result");
-
-        model.addAttribute("result", result);
-        return "test";
-    }
+//    @GetMapping("/test")
+//    public String test(Model model) {
+//
+//        int result = testMapper.find();
+//        log.info("result");
+//
+//        model.addAttribute("result", result);
+//        return "test";
+//    }
 
 }

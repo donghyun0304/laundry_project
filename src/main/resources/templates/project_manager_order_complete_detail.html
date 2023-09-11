@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/project_footer.css">
+    <link rel="stylesheet" href="/css/project_header.css">
+    <link rel="stylesheet" href="/css/project_manager_order_detail.css">
+</head>
+<header th:replace="~{/common/project_header :: header}"></header>
+<body>
+
+<div class='container'>
+    <input type="text" class="hidden" th:value="${info['orderInfo'].ordersId}" name="ordersId">
+    <input type="text" class="hidden" th:value="${info['orderInfo'].inspectionId}" name="inspectionId">
+    <input type="text" class="hidden" value="9" name="adminId">
+    <h2>주문정보</h2>
+    <table class='orderOption'>
+        <tr>
+            <th class='content'>주문번호</th>
+            <td class='content' th:text="${info['orderInfo'].ordersId}"></td>
+        </tr>
+        <tr>
+            <th class='content'>요청사항</th>
+        </tr>
+    </table>
+    <div class='info'>
+        <span class='content' th:text="${info['orderInfo'].ordersRequest}"></span>
+    </div>
+    <hr class='bighr'>
+
+    <h4 class='laundry' th:if="${info['commonLaundryInfo'] != null }">생활빨래</h4>
+    <table th:if="${info['commonLaundryInfo'] != null }">
+        <tr>
+            <th class='content'>세탁무게</th>
+            <td class='content laundry_result'>
+                <input type="text" name="commonLaundryId" class="hidden" th:value="${info['commonLaundryInfo'].commonLaundryId}">
+                <span name="commonLaundryWeight" id="laundryWeight" th:text="${info['commonLaundryInfo'].commonLaundryWeight}"></span>
+                <span>kg</span>
+            </td>
+        </tr>
+    </table>
+
+    <h4 th:if="${info['drycleaningInfo'] != null}">드라이클리닝</h4>
+    <table th:if="${info['drycleaningInfo'] != null}" th:each="dry, dryIndex : ${info['drycleaningInfo']}">
+        <input type="text" class="hidden" th:value="${dry.drycleaningId}" th:name="|drycleaningList[${dryIndex.index}].drycleaningId|">
+        <tr>
+            <th class='content' th:text="${dry.drycleaningCategory}"></th>
+            <td class='content drycleaning_result'>
+                <div>
+                    <input type="radio" value="Y" th:checked="${dry.drycleaningPossibility.toString() == 'Y'}">
+                    <span class="custom-radio" id='poss' ></span>
+                    <label>가능</label>
+                </div>
+                <div>
+                    <input type="radio" value="N" th:checked="${dry.drycleaningPossibility.toString() == 'N'}" >
+                    <span class="custom-radio" id='imposs' ></span>
+                    <label>불가능</label>
+                </div>
+            </td>
+        <tr>
+        <tr>
+            <th class='content'>요청사항</th>
+        </tr>
+        <tr>
+            <th th:text="${dry.drycleaningRequest}"/>
+        </tr>
+        <tr th:if="${dry.drycleaningPossibility.toString() == 'N'}">
+            <th class='content'>불가능 이유</th>
+        </tr>
+        <tr th:if="${dry.drycleaningPossibility.toString() == 'N'}">
+            <th th:text="${dry.drycleaningNotReason}"/>
+        </tr>
+    </table>
+
+    <hr>
+    <h4 th:if="${info['repairInfo'] != null}">수선</h4>
+    <table th:if="${info['repairInfo'] != null}" th:each="repair, repairIndex : ${info['repairInfo']}">
+        <input type="text" class="hidden" th:value="${repair.repairId}" th:name="|repairList[${repairIndex.index}].repairId|">
+        <tr>
+            <th class='content' th:text="${repair.repairCategory}">소분류 이름</th>
+            <td class='content drycleaning_result' th:id="|rpos${repairIndex.index}b|">
+                <div>
+                    <input type="radio" value="Y"  th:checked="${repair.repairPossibility.toString() == 'Y'}" >
+                    <span class="custom-radio" id='poss2'></span>
+                    <label>가능</label>
+                </div>
+                <div>
+                    <input type="radio" value="N" th:checked="${repair.repairPossibility.toString() == 'N'}" >
+                    <span class="custom-radio" id='imposs2' ></span>
+                    <label >불가능</label>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th class='content'>요청사항</th>
+        </tr>
+        <tr>
+            <th th:text="${repair.repairRequest}"/>
+        </tr>
+
+        <tr th:if="${repair.repairPossibility.toString() == 'N'}">
+            <th class='content'>불가능 이유</th>
+        </tr>
+        <tr th:if="${repair.repairPossibility.toString() == 'N'}">
+            <th th:text="${repair.repairNotReason}"/>
+        </tr>
+
+    </table>
+
+    <!-- 사진 -->
+    <div id="imagePreview">
+        <h3>올려둔 이미지 보여주기</h3>
+
+    </div>
+
+    <div class='fixbox'>
+        <input type="button" class="btnEdit" value="검수수정">
+    </div>
+</div>
+</body>
+<footer th:replace="~{/common/project_footer :: footer}"> </footer>
+</html>

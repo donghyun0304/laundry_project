@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aug.laundry.dao.rider.RiderMapper">
+
+    <select id="orderList" resultType="aug.laundry.domain.Orders">
+<!--        select orders_pay_status, orders_id, orders_address ||' '||orders_address_details as orders_address, orders_date-->
+        select orders_pay_status as ordersStatus, orders_id, orders_address, orders_address_details, orders_date
+        from orders
+        <if test="status == '대기중'">
+            where quick_rider_id is null and orders_pay_status in(2, 10)
+        </if>
+        <if test="status == '진행중'">
+            where quick_rider_id = (select quick_rider_id from quick_rider where quick_rider_name = '스크류바') and orders_pay_status in(3, 4, 11, 12)
+        </if>
+        <if test="status == '완료'">
+            where quick_rider_id = (select quick_rider_id from quick_rider where quick_rider_name = '스크류바')and orders_pay_status in(5, 13)
+        </if>
+    </select>
+
+    <select id="orderListEnum" resultType="aug.laundry.dto.OrdersEnum">
+        <!--        select orders_pay_status, orders_id, orders_address ||' '||orders_address_details as orders_address, orders_date-->
+        select orders_pay_status as ordersStatus, orders_id, orders_address, orders_address_details, orders_date
+        from orders
+        <if test="status == '대기중'">
+            where quick_rider_id is null and orders_pay_status in(2, 10)
+        </if>
+        <if test="status == '진행중'">
+            where quick_rider_id = (select quick_rider_id from quick_rider where quick_rider_name = '스크류바') and orders_pay_status in(3, 4, 11, 12)
+        </if>
+        <if test="status == '완료'">
+            where quick_rider_id = (select quick_rider_id from quick_rider where quick_rider_name = '스크류바')and orders_pay_status in(5, 13)
+        </if>
+    </select>
+
+    <select id="orderListCnt" resultType="map">
+        select 'acceptCnt' as query_name, count(*) as result
+        from orders
+        where quick_rider_id = (select quick_rider_id from quick_rider where quick_rider_name = '스크류바')
+        and orders_pay_status in (3, 4, 10, 11)
+
+        union all
+
+        select 'waitCnt' as query_name, count(*) as result
+        from orders
+        where quick_rider_id is null
+
+        union all
+
+        select 'completeCnt' as query_name, count(*) as result
+        from orders
+        where quick_rider_id = (select quick_rider_id from quick_rider where quick_rider_name = '스크류바')
+        and orders_pay_status in (5, 12)
+    </select>
+
+
+
+
+<!--  주문 상세  -->
+    <select id="orderInfo" resultType="Orders">
+        SELECT
+        o.orders_pay_status as ordersStatus,
+        o.orders_id,
+<!--        o.orders_address || ' ' || o.orders_address_details AS ordersAddress,-->
+        o.orders_address,
+        o.orders_address_details,
+        o.orders_date,
+        o.orders_request,
+        o.orders_pickup,
+        o.orders_info,
+        ql.quick_laundry_take_time as ordersPickupDate
+        FROM
+        orders o
+        INNER JOIN
+        orders_detail od ON o.orders_id = od.orders_id
+        INNER JOIN
+        quick_laundry ql ON od.orders_detail_id = ql.orders_detail_id
+        WHERE
+        o.orders_id = #{ordersId}
+<!--        o.orders_pay_status in(2, 10) and o.orders_id = #{ordersId}-->
+        <!--        o.orders_pay_status in(3, 4, 11, 12) and o.orders_id = #{ordersId} and o.quick_rider_id = (select quick_rider_id from quick_rider where quick_rider_name = '스크류바')-->
+    </select>
+
+<!--  배달기사가 배정되어 orders테이블에 rider_id 업데이트  -->
+    <update id="updateOrderRider">
+        update orders set quick_rider_id = (select quick_rider_id from quick_rider where quick_rider_name = '스크류바') where orders_id = #{ordersId}
+    </update>
+
+<!--  그리고 orders_pay_status 변경(변경 될때마다 사용)  -->
+    <update id="updateOrderStatus">
+        update orders set orders_pay_status = orders_pay_status+1 where orders_id = #{ordersId}
+    </update>
+
+    <select id="riderInfo" resultType="Rider">
+        select * from quick_rider where quick_rider_name = #{riderName}
+    </select>
+
+    <select id="finishImg" resultType="DeliveryImage">
+        select * from delivery_image where orders_id = #{ordersId}
+    </select>
+</mapper>

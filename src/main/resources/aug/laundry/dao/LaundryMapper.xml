@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aug.laundry.dao.LaundryMapper">
+
+    <select id="firstInfo" resultType="aug.laundry.dto.OrderInfo">
+        SELECT DISTINCT Q.ORDERS_DETAIL_ID as isQuick, COALESCE(C.ORDERS_DETAIL_ID,0) as isDry, COALESCE(D.ORDERS_DETAIL_ID,0) as isCommon, COALESCE(R.ORDERS_DETAIL_ID, 0) as isRepair
+        FROM ORDERS_DETAIL O
+        LEFT JOIN QUICK_LAUNDRY Q ON (O.ORDERS_DETAIL_ID = Q.ORDERS_DETAIL_ID)
+        LEFT JOIN COMMON_LAUNDRY C ON (O.ORDERS_DETAIL_ID = C.ORDERS_DETAIL_ID)
+        LEFT JOIN DRYCLEANING D ON (O.ORDERS_DETAIL_ID = D.ORDERS_DETAIL_ID)
+        LEFT JOIN REPAIR R ON (O.ORDERS_DETAIL_ID = R.ORDERS_DETAIL_ID)
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
+    <select id="getCoupon" resultType="aug.laundry.dto.MyCoupon">
+        SELECT COUPON_LIST_ID, COUPON_PRICE, COUPON_NAME, TO_CHAR(COUPON_END_DATE, 'YYYY-MM-DD HH24:mm') as couponEndDate, CASE WHEN COUPON_END_DATE IS NULL THEN '무제한 사용가능'
+                                                                                                                                WHEN (COUPON_END_DATE - SYSDATE) >= 1 THEN ROUND(COUPON_END_DATE - SYSDATE) || '일 남음'
+                                                                                                                                ELSE ROUND(TRUNC((COUPON_END_DATE - SYSDATE) * 24)) || '시간 남음'
+                                                                                                                                END AS remainingTime
+        FROM COUPON_LIST
+        JOIN COUPON ON (COUPON_LIST.COUPON_ID = COUPON.COUPON_ID)
+        WHERE MEMBER_ID = #{memberId} AND COUPON_LIST_STATUS = 1 AND (COUPON_END_DATE > SYSDATE OR COUPON_END_DATE IS NULL)
+        ORDER BY COUPON_END_DATE
+    </select>
+
+    <select id="getAddress" resultType="aug.laundry.dto.Address">
+        SELECT MEMBER_ZIPCODE, MEMBER_ADDRESS, MEMBER_ADDRESS_DETAILS
+        FROM MEMBER
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
+    <select id="getDry" resultType="string">
+        SELECT DRYCLEANING_CATEGORY
+        FROM ORDERS_DETAIL
+        JOIN DRYCLEANING ON (ORDERS_DETAIL.ORDERS_DETAIL_ID = DRYCLEANING.ORDERS_DETAIL_ID)
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
+    <select id="getRepair" resultType="string">
+        SELECT REPAIR_CATEGORY
+        FROM ORDERS_DETAIL
+        JOIN REPAIR ON (ORDERS_DETAIL.ORDERS_DETAIL_ID = REPAIR.ORDERS_DETAIL_ID)
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
+    <select id="isPass" resultType="Integer">
+        SELECT SUBSCRIPTION_ID
+        FROM MEMBER
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
+    <select id="validCoupon" resultType="aug.laundry.domain.CouponList">
+        SELECT DISTINCT COUPON_LIST_ID, MEMBER_ID, COUPON_ID, COUPON_LIST_CREATE_DATE, COUPON_LIST_STATUS, ORDERS_ID, COUPON_END_DATE
+        FROM COUPON_LIST
+        WHERE MEMBER_ID = #{memberId} AND COUPON_LIST_ID = #{couponListId} AND COUPON_LIST_STATUS = 1 AND (COUPON_END_DATE IS NULL OR COUPON_END_DATE > SYSDATE)
+    </select>
+
+    <update id="useCoupon">
+        UPDATE COUPON_LIST
+        SET COUPON_LIST_STATUS = COUPON_LIST_STATUS + 1
+        WHERE MEMBER_ID = #{memberId} AND COUPON_LIST_ID = #{couponListId} AND COUPON_LIST_STATUS = 1 AND (COUPON_END_DATE IS NULL OR COUPON_END_DATE > SYSDATE)
+    </update>
+
+    <insert id="insert">
+        INSERT INTO ORDERS (ORDERS_ID, MEMBER_ID, ORDERS_DATE, ORDERS_ADDRESS, ORDERS_ADDRESS_DETAILS, ORDERS_PICKUP, ORDERS_PICKUP_DATE, ORDERS_RETURN_DATE, ORDERS_INFO, ORDERS_REQUEST, ORDERS_EXPECTED_PRICE, ORDERS_STATUS)
+        VALUES (SEQ_ORDERS_ID.NEXTVAL, #{memberId}, SYSDATE, #{ordersAddress}, #{ordersAddressDetails}, #{ordersPickup}, TO_DATE(#{ordersPickupDate}, 'yyyy-MM-dd HH24:mi') , TO_DATE(#{ordersReturnDate}, 'yyyy-MM-dd HH24:mi'), #{ordersInfo}, #{ordersRequest},#{ordersExpectedPrice}, 2)
+    </insert>
+
+    <select id="getCouponDiscount">
+        SELECT COUPON_PRICE
+        FROM COUPON_LIST
+        JOIN COUPON ON (COUPON.COUPON_ID = COUPON_LIST.COUPON_ID)
+        WHERE MEMBER_ID = #{memberId} AND COUPON_LIST_ID = #{couponListId}
+    </select>
+
+
+</mapper>

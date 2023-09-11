@@ -17,14 +17,14 @@ public class Orders {
     private String ordersInfo;
     private String ordersRequest;
     private Integer ordersPay;
-    private Long quickLaundryId;
-    private Long inspectionId;
     private String ordersPickup;
     private Integer ordersExpectedPrice;
     private Integer ordersFinalPrice;
-    private Integer ordersPayStatus;
+    private Integer ordersStatus;
     private Long riderId;
     private Long quickRiderId;
+    private String ordersPickupDate;
+    private String ordersReturnDate;
 
     public Orders() {
     }

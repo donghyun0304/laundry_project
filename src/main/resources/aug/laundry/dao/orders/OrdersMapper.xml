@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aug.laundry.dao.orders.OrdersMapper">
+
+
+    <select id="findByOrdersId" resultType="aug.laundry.dto.OrdersResponseDto">
+        SELECT TO_CHAR(TO_NUMBER(TO_CHAR(A.ORDERS_DATE, 'MM'))) || '월 ' || TO_CHAR(A.ORDERS_DATE, 'DD') || '일' || TO_CHAR(A.ORDERS_DATE, '(DY)') AS ORDERS_DATE,
+        A.ORDERS_ID,
+        TO_CHAR(A.ORDERS_PICKUP_DATE, 'YYYY/MM/DD(DY) HH24') || '시' AS ORDERS_PICKUP_DATE,
+        TO_CHAR(A.ORDERS_RETURN_DATE, 'YYYY/MM/DD(DY) HH24') || '시' AS ORDERS_RETURN_DATE,
+        A.ORDERS_ADDRESS,
+        A.ORDERS_ADDRESS_DETAILS, A.ORDERS_REQUEST, C.COMMON_LAUNDRY_WEIGHT,
+        A.MEMBER_ID
+        FROM ORDERS A
+        INNER JOIN ORDERS_DETAIL B
+        ON A.ORDERS_ID = B.ORDERS_ID
+        INNER JOIN COMMON_LAUNDRY C
+        ON B.ORDERS_DETAIL_ID = C.ORDERS_DETAIL_ID
+        WHERE A.ORDERS_ID = #{ordersId}
+    </select>
+
+    <select id="findDryCleaningByOrdersId" resultType="Drycleaning">
+        SELECT A.DRYCLEANING_CATEGORY, A.DRYCLEANING_POSSIBILITY, A.DRYCLEANING_NOT_REASON
+        FROM DRYCLEANING A
+        INNER JOIN ORDERS_DETAIL B
+            ON A.ORDERS_DETAIL_ID = B.ORDERS_DETAIL_ID
+        WHERE B.ORDERS_ID = #{ordersId}
+    </select>
+
+    <select id="findRepairByOrdersId" resultType="Repair">
+        SELECT A.REPAIR_CATEGORY, A.REPAIR_POSSIBILITY, A.REPAIR_NOT_REASON
+        FROM REPAIR A
+        INNER JOIN ORDERS_DETAIL B
+            ON A.ORDERS_DETAIL_ID = B.ORDERS_DETAIL_ID
+        WHERE B.ORDERS_ID = #{ordersId}
+    </select>
+
+    <select id="findQuickLaundryByOrdersId" resultType="int">
+        SELECT COUNT(*)
+        FROM QUICK_LAUNDRY A
+        INNER JOIN ORDERS_DETAIL B
+        ON A.ORDERS_DETAIL_ID = B.ORDERS_DETAIL_ID
+        WHERE B.ORDERS_ID = #{ordersId}
+    </select>
+
+    <update id="updateExpectedPriceByOrdersId">
+        UPDATE ORDERS
+        SET ORDERS_EXPECTED_PRICE = #{expectedPrice}
+        WHERE ORDERS_ID = #{ordersId}
+    </update>
+
+    <select id="findExpectedPriceByOrdersId" resultType="Long">
+        SELECT ORDERS_EXPECTED_PRICE
+        FROM ORDERS
+        WHERE ORDERS_ID = #{ordersId}
+    </select>
+
+</mapper>

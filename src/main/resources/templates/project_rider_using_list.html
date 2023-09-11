@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/project_footer.css">
+    <link rel="stylesheet" href="/css/project_header.css">
+    <link rel="stylesheet" href="/css/project_rider.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://apis.openapi.sk.com/tmap/jsv2?version=1&appKey=4jevlbxAGy2TQzNvpdD2B3eAfmkUdXQr8uWsi1A1"></script>
+    <script src="/js/rider_using_list.js"></script>
+    <title>Document</title>
+</head>
+<header th:replace="~{/common/project_header :: header}"></header>
+<body>
+    <div class='container'>
+        <div class='rider_header'>
+            <div class='ride_head'>배달</div><br>
+            <div class='ride_txt'>
+                <div>진행중인 배달 건수 : </div>
+                <div class='ride_num' th:text="${cnt[0]['RESULT']} + '건'">0건</div>
+            </div>
+        </div>
+        <div class='select_category'>
+            <ul>
+                <a href="/ride/wait"><li th:text="${'대기중(' + cnt[1]['RESULT']} + ')'">대기중(0)</li></a>
+                <a href="/ride/accept"><li class='active' th:text="${'진행중(' + cnt[0]['RESULT']} + ')'">진행중(16)</li></a>
+                <a href="/ride/finish"><li th:text="${'완료(' + cnt[2]['RESULT']} + ')'">완료(7)</li></a>
+            </ul>
+        </div>
+            <div class='delivery_list'>
+                <ul>
+                    <th:block th:each="list : ${orderList}">
+                        <a th:href="@{/ride/orders/{ordersId}(ordersId=${list.ordersId})}" >
+                            <li>
+                                <span class='order_num'>주문번호 :&nbsp;</span><span class='order_num' name="ordersId" th:text="${list.ordersId}">1119</span><br>
+                                <span class='delivery_address' th:text="${list.ordersAddress + ' ' + list.ordersAddressDetails}">서울특별시 서대문구 대현동 777-8 508동 116호</span>
+                                <div class='space'>
+                                    <span class='delivery_time' th:text="${list.ordersStatus}"></span>
+                                    <span class='delivery_dis'>거리 : 1.2km</span>
+                                </div>
+                            </li>
+                            <input type="hidden" name="" id="delivery_address" value="" th:value="${list.ordersAddress}">
+                        </a>
+                    </th:block>
+                    <th:block th:if="${cnt[0]['RESULT'] == 0}">
+                        <li class='drive_none'>
+                            <span>현재 진행 중인 배달이 없습니다!</span>
+                        </li>
+                    </th:block>
+                </ul>
+            </div>
+    </div>
+</body>
+<footer th:replace="~{/common/project_footer :: footer}"> </footer>
+</html>

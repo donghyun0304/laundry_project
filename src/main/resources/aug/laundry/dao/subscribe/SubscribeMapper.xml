@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="aug.laundry.dao.subscribe.SubscribeMapper">
+    <insert id="insertJoinSubscribe">
+        INSERT INTO subscription_pay(subscription_pay_id, member_id, select_month, merchant_uid,  customer_uid, amount, pay_date, subscription_status, imp_uid)
+        VALUES(seq_subscription_pay_id.nextval, #{member_id}, #{select_month}, #{merchant_uid}, #{customer_uid}, #{amount}, default, default, #{imp_uid})
+    </insert>
+
+    <update id="updateMemberSubscribe">
+        UPDATE member
+        SET subscription_id = (
+            SELECT subscription_id
+            FROM subscription
+            WHERE subscription_month=#{selectMonth}
+        ), subscription_expire_date = SYSDATE + (31*#{selectMonth})
+        WHERE member_id = #{memberId}
+    </update>
+
+    <update id="updateNextMerchantId">
+        UPDATE subscription_pay
+        SET merchant_uid_r = #{merchant_uid_r}
+        WHERE merchant_uid = #{merchant_uid}
+    </update>
+
+</mapper>
