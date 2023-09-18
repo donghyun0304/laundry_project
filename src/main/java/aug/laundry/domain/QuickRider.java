@@ -16,6 +16,7 @@ public class QuickRider {
     private String quickRiderPhone;
     private Integer quickRiderZipcode;
     private String quickRiderAddress;
+    private String workingArea;
 
     public QuickRider() {
     }

@@ -56,12 +56,25 @@
         SELECT POINT_ID, POINT_STACK, POINT_STACK_REASON, TO_CHAR(POINT_STACK_DATE, 'yy-MM-dd HH24:MI')AS POINT_STACK_DATE, POINT_NOW
         FROM POINT
         WHERE MEMBER_ID = #{memberId}
+        ORDER BY POINT_ID DESC
     </select>
 
     <select id="getPointNow" resultType="aug.laundry.dto.PointNowDto">
         select point_now
         from (select * from point order by point_id desc)
         where <![CDATA[ROWNUM = 1]]> and member_id = #{memberId}
+    </select>
+    
+    <select id="someCoupon" resultType="int">
+        SELECT COUNT(MEMBER_ID)
+        FROM COUPON_LIST
+        WHERE MEMBER_ID = #{memberId} AND COUPON_LIST_STATUS = 1 AND (COUPON_END_DATE > SYSDATE OR COUPON_END_DATE IS NULL)
+    </select>
+
+    <select id="findMySubscribeMonths" resultType="aug.laundry.dto.MySubscribeMonthsDto">
+        SELECT SUBSCRIPTION_ID, TO_CHAR(SUBSCRIPTION_EXPIRE_DATE, 'YY/MM/DD HH24:MI') AS SUBSCRIPTION_EXPIRE_DATE
+        FROM MEMBER
+        WHERE MEMBER_ID = #{memberId}
     </select>
 
 </mapper>

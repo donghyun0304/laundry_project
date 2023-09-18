@@ -47,7 +47,7 @@ ul a:first-child{
     height: 6rem;
 }
 ul a:first-child{
-    border-bottom: 3px solid silver;
+    border-bottom: 3px solid var(--main-color);
 }
 ul a li{
     margin-top: 1.5rem;

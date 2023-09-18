@@ -113,6 +113,7 @@ nav{
     margin: 0;
     box-shadow: 2px 2px 5px #dadada;
     border-radius: var(--border-radius);
+    background-color: white;
 }
 
 .yearMonth > span{
@@ -167,6 +168,7 @@ nav{
     column-gap: 0.5rem;
     row-gap: 1rem;
     flex-wrap: wrap;
+    background-color:white;
 }
 .active{
     display: flex;
@@ -195,4 +197,26 @@ nav{
 }
 .subCal_span{
     margin: 0 0 0 1rem;
+}
+.subCal_location{
+    height: 3rem;
+    overflow: hidden;
+    transition: height 0.3s ease;
+}
+
+.calActive{
+    height: 21.5rem;
+}
+
+.title{
+    margin: 1rem;
+}
+.calDisabled{
+    color: #ccc;
+}
+.disabled{
+    display: none;
+}
+input[type=radio] {
+    display: none;
 }

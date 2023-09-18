@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="/css/project_manager_order_list.css">
     <title>세탁신청</title>
 </head>
-<header th:replace="~{/common/project_header :: header}"></header>
+<header th:replace="~{/common/project_manager_header :: header}"></header>
 <body>
     <div class='container'>
         <input type="text" value="5" class="hidden" id="inspectionStatus">
@@ -18,7 +18,10 @@
         <div class='res_box' id="resBox">
         </div>
     </div>
-
+<script>
+    document.querySelector('#liOne').classList.add('active');
+    document.querySelector('#liTwo').classList.remove('active');
+</script>
 </body>
-<footer th:replace="~{/common/project_footer :: footer}"> </footer>
+<footer th:replace="~{/common/project_manager_order_footer :: footer}"> </footer>
 </html>

@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
@@ -15,8 +17,9 @@ public class RepairInfoDto {
     private String repairCategory;
     private char repairPossibility;
     private String repairNotReason;
-    private String repairImageUploadName;
-    private String repairImageStoreName;
+    private List<String> repairImageStoreName;
+
+
 
     public RepairInfoDto() {
 

@@ -15,6 +15,8 @@ public class ExceptionHandler {
                 .message(e.getMessage())
                 .build();
 
+        e.printStackTrace();
+
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
@@ -25,6 +27,8 @@ public class ExceptionHandler {
                 .code(HttpStatus.BAD_REQUEST.value())
                 .message(e.getMessage())
                 .build();
+
+        e.printStackTrace();
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

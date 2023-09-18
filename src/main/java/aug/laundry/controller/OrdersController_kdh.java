@@ -1,8 +1,8 @@
 package aug.laundry.controller;
 
 import aug.laundry.commom.SessionConstant;
+import aug.laundry.dao.member.MemberMapper;
 import aug.laundry.dto.*;
-import aug.laundry.enums.category.CategoryOption;
 import aug.laundry.enums.category.Delivery;
 import aug.laundry.enums.category.MemberShip;
 import aug.laundry.enums.category.Pass;
@@ -10,18 +10,14 @@ import aug.laundry.service.LaundryService;
 import aug.laundry.service.OrdersService_kdh;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
+import static aug.laundry.commom.ConstOrderStatus.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -31,36 +27,59 @@ public class OrdersController_kdh {
 
     private final OrdersService_kdh ordersServiceKdh;
     private final LaundryService laundryService;
+    private final MemberMapper memberMapper;
 
-    @GetMapping("/orders")
-    public String orders(){
+    @GetMapping
+    public String orders(Model model, @SessionAttribute(name = SessionConstant.LOGIN_MEMBER, required = false)Long memberId){
+
+        List<CategoryForOrdersListDto> category = ordersServiceKdh.findCategoryByMemberId(memberId);
+        List<OrdersForOrdersListDto> orders = ordersServiceKdh.findOrders(memberId);
+
+        log.info("category={}", category);
+        log.info("orders={}",orders);
+        model.addAttribute("categories", category);
+        model.addAttribute("orders", orders);
+
+        return "project_order_list_2";
+    }
 
 
-        return "";
+    @GetMapping("/complete")
+    public String complete(Model model, @SessionAttribute(name = SessionConstant.LOGIN_MEMBER, required = false)Long memberId){
+
+        List<CategoryForOrdersListDto> categoryFinished = ordersServiceKdh.findCategoryFinishedByMemberId(memberId);
+        List<OrdersForOrdersListDto> ordersFinished = ordersServiceKdh.findOrdersFinished(memberId);
+
+        log.info("ordersFinsihed={}",ordersFinished);
+        model.addAttribute("categoriesFinished", categoryFinished);
+        model.addAttribute("ordersFinished", ordersFinished);
+
+        return "project_order_list_complete";
     }
 
     @GetMapping("/{ordersId}/payment")
     public String payOrder(@PathVariable Long ordersId,
                            @SessionAttribute(name = SessionConstant.LOGIN_MEMBER, required = false)Long memberId,
                            Model model){
-
-
+        
         OrdersResponseDto ordersResponseDto = ordersServiceKdh.findByOrdersId(ordersId);
 
-//        if(memberId != ordersResponseDto.getMemberId()){
-//            throw new IllegalStateException("비정상적인 요청입니다. (결제회원과 로그인회원이 일치하지않음)");
-//        }
-        MemberShip memberShip = laundryService.isPass(1L); // 패스 여부  1l을 세션의 member로 수정해야함
+        if(memberId != ordersResponseDto.getMemberId()){
+            throw new IllegalStateException("비정상적인 요청입니다. (결제회원과 로그인회원이 일치하지않음)");
+        }
+        MemberShip memberShip = laundryService.isPass(memberId);
         Pass pass = memberShip.getCheck();
 
-
-
+        MemberDto member = memberMapper.selectOne(memberId); // 멤버아이디 바꾸기
+        model.addAttribute("member", member);
         Map<String, Object> dryMap = ordersServiceKdh.findDryCleaningByOrdersId(ordersId);
         Map<String, Object> repairMap = ordersServiceKdh.findRepairByOrdersId(ordersId);
         boolean isQuickLaundry = ordersServiceKdh.isQuickLaundry(ordersId);
-        Integer point = ordersServiceKdh.findPointByMemberId(1L);  // 1L을 세션의 memberId로 수정해야함
+        Integer point = ordersServiceKdh.findPointByMemberId(memberId);
 
-
+        log.info("getCommonLaundryPrice={}",ordersResponseDto.getCommonLaundryPrice());
+        log.info("totalDryPrice={}",(Long)dryMap.get("totalDryPrice"));
+        log.info("totalRepairPrice={}",(Long)repairMap.get("totalRepairPrice"));
         //배송금액 로직 (생활빨래, 드라이클리닝, 수선만 포함)(배송비X 빠른세탁 X)
         Long totalPrice = ordersResponseDto.getCommonLaundryPrice() +
                 (Long)dryMap.get("totalDryPrice") +
@@ -80,6 +99,10 @@ public class OrdersController_kdh {
             totalPriceWithDeliveryPrice = deliveryPrice + totalPriceWithPassApplied;
         }
 
+        Long subscriptionDiscountPrice = (totalPriceWithPassApplied==null) ? 0L : (totalPrice - totalPriceWithPassApplied);
+
+        model.addAttribute("subscriptionDiscount", subscriptionDiscountPrice);
+        log.info("subscriptionDiscount={}", subscriptionDiscountPrice);
 
         model.addAttribute("totalPriceWithDeliveryPrice", totalPriceWithDeliveryPrice);
 
@@ -94,10 +117,21 @@ public class OrdersController_kdh {
         model.addAttribute("dryMap", dryMap);
         model.addAttribute("repairMap", repairMap);
         model.addAttribute("point", point);
-        model.addAttribute("memberId", 1L); // 1L을 세션의 memberId로 수정해야함
+        model.addAttribute("memberId", memberId);
         model.addAttribute("quickLaundry",
                 new QuickLaundryResponseDto(Delivery.QUICK_DELIVERY, isQuickLaundry));
         model.addAttribute("delivery", delivery);
+
+        Integer ordersStatus = ordersResponseDto.getOrdersStatus();
+
+        if(ordersStatus==PAY_SUCCESS || ordersStatus==WASH_ING ||
+                ordersStatus==WASH_SUCCESS || ordersStatus==BEFORE_TAKE_WHEN_WASH_SUCCESS ||
+                ordersStatus==TAKE_SUCCESS_AFTER_WASH_SUCCESS || ordersStatus==DELIVERY_SUCCESS){
+            PriceResponseDto price = ordersServiceKdh.findPricesByOrdersId(ordersId);
+            log.info("price={}",price);
+            model.addAttribute("price", price);
+        }
+
 
         return "project_order_view";
     }
@@ -132,14 +166,25 @@ public class OrdersController_kdh {
         return delivery;
     }
 
-    @GetMapping("/members/{memberId}/coupons")
-    public String coupons(@PathVariable Long memberId, Model model, String takeDate){
-        List<MyCoupon> getCoupon = laundryService.getCoupon(memberId);
+    @GetMapping("/{ordersId}/members/{memberId}/coupons")
+    public String coupons(@PathVariable Long ordersId, @PathVariable Long memberId, Model model, String takeDate){
+
+        Long expectedPrice = ordersServiceKdh.findExpectedPriceByOrdersId(ordersId);
+        List<MyCoupon> getCoupon = ordersServiceKdh.getCoupon(memberId);
+        log.info("getCoupon={}",getCoupon);
+
         model.addAttribute("memberId", memberId);
         model.addAttribute("coupon", getCoupon);
+        model.addAttribute("expectedPrice", expectedPrice);
 
         return "project_use_coupon2";
     }
+
+
+
+
+
+
 
 }
 

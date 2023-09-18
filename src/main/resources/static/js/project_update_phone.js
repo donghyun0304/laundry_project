@@ -42,6 +42,36 @@ button_phoneChange.addEventListener('click', function(){
 
 });
 
+//sendSmsBtn.addEventListener('click',function(e){
+//
+//    e.preventDefault();
+//
+//    let number = document.querySelector('#phone').value;
+//    let phonenumber = number.replace(/-/gi,'');
+//    let phoneCheckRes = document.querySelector('#phoneCheckRes');
+//    let button_phoneChange = document.querySelector('#button_phoneChange');
+//
+//    fetch("/sendSms?phonenumber="+phonenumber)
+//    .then(response => response.json())
+//    .then(map => {
+//    		alert("인증번호가 전송되었습니다.");
+//    		phone_check_number = map.number;
+//    		//document.querySelector('.phonenumber-check-input').disabled = false;
+//    		document.querySelector('#smsValueCheck').addEventListener('click', function(){
+//    			let inputCode = document.querySelector('#phoneCheck').value;
+//                let errors = document.querySelectorAll('.errors');
+//    			if(phone_check_number == inputCode){
+//    		        alert('인증되었습니다.');
+//    		        phoneCheckRes.value='1';
+//                    button_phoneChange.disabled = false;
+//    		        errors[1].textContent = '';
+//    			}else{
+//    				alert('인증 실패하였습니다. 인증번호를 확인하시기 바랍니다');
+//    			}
+//    		})
+//    	})
+//    })
+//});
 
 sendSmsBtn.addEventListener('click',function(e){
 
@@ -52,11 +82,11 @@ sendSmsBtn.addEventListener('click',function(e){
     let phoneCheckRes = document.querySelector('#phoneCheckRes');
     let button_phoneChange = document.querySelector('#button_phoneChange');
 
-    fetch("/sendSms?phonenumber="+phonenumber)
+    fetch("/check/sendSMS?to="+phonenumber)
     .then(response => response.json())
     .then(map => {
     		alert("인증번호가 전송되었습니다.");
-    		phone_check_number = map.number;
+    		phone_check_number = map;
     		//document.querySelector('.phonenumber-check-input').disabled = false;
     		document.querySelector('#smsValueCheck').addEventListener('click', function(){
     			let inputCode = document.querySelector('#phoneCheck').value;

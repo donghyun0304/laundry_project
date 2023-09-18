@@ -25,6 +25,7 @@ public class Orders {
     private Long quickRiderId;
     private String ordersPickupDate;
     private String ordersReturnDate;
+    private Long pointId;
 
     public Orders() {
     }

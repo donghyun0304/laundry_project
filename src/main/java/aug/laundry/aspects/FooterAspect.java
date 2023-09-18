@@ -20,10 +20,52 @@ public class FooterAspect {
         for (Object arg : args) {
             if (arg instanceof Model){
                 ((Model) arg).addAttribute("footer", "mypage");
-                break;
+            }
+            if (arg instanceof Long) {
+
+                Long memberId = (Long) arg;
+                if (memberId == null) {
+                    // 자동 로그인을 Application 형태로 바꾸면 여기에다가 추가작성해야됨
+                }
+
             }
         }
+    }
 
+    @Before("execution(* aug.laundry.controller.MainController.*(..))")
+    public void mainpageAspect(JoinPoint joinPoint) {
+        log.info("MainPageController Aspect Before 실행 : {}", joinPoint.getSignature().getName());
 
+        Object[] args = joinPoint.getArgs();
+        for (Object arg : args) {
+            if (arg instanceof Model) {
+                ((Model) arg).addAttribute("footer", "main");
+            }
+
+        }
+    }
+
+    @Before("execution(* aug.laundry.controller.RiderController.*routine*(..))")
+    public void rider(JoinPoint joinPoint) {
+        System.out.println("RiderController실행----------------------------------");
+
+        Object[] args = joinPoint.getArgs();
+        for (Object arg : args) {
+            if (arg instanceof Model) {
+                ((Model) arg).addAttribute("head", "routine");
+            }
+        }
+    }
+
+    @Before("execution(* aug.laundry.controller.AdminInspectionController.*view*(..))")
+    public void admin(JoinPoint joinPoint) {
+        log.info("AdminInspectionController실행");
+
+        Object[] args = joinPoint.getArgs();
+        for (Object arg : args) {
+            if (arg instanceof Model) {
+                ((Model) arg).addAttribute("head", "view");
+            }
+        }
     }
 }

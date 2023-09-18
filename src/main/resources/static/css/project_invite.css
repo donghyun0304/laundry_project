@@ -4,7 +4,7 @@
     font-size: x-large;
     font-weight: bold;
     margin-left: 0px;
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
 }
 .inviteCode{
     background-color: var(--main-font-color);
@@ -14,6 +14,7 @@
     margin-bottom: 2rem;
     padding-top: 1.5rem;
     text-align: center;
+    box-shadow: 2px 2px 5px;
 }
 .inviteCode p:first-child{
     font-size: large;
@@ -69,6 +70,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    box-shadow: 2px 2px 5px;
 }
 .inviteLogo .plus{
     margin: 1rem 0;

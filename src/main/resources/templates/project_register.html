@@ -8,28 +8,27 @@
     <link rel="stylesheet" href="/css/project_header.css">
     <link rel="stylesheet" href="/css/project_register.css">
     <title>세탁신청</title>
-    <script src="https://kit.fontawesome.com/43c3dfddba.js" crossorigin="anonymous"></script>
-
 </head>
 <header th:replace="~{/common/project_header :: header}"></header>
 <body>
     <div class='container'>
-        <form class='register_form' method="post" action="/register">
+        <form class='register_form' method="post" action="/registerAction"  onsubmit="return validationSubmit()">
             <div class='register_box_logo'>
                 <h5 class='top'>회원가입</h5>
             </div>
             <div class='regi_box_phone'>
                 <h5 class='text_style'>아이디</h5>
                 <div>
-                    <input type="tel" maxlength='13' class='find_Id_box_pw' id="member_account" name="memberAccount">
+                    <input type="text" maxlength='13' class='find_Id_box_pw' id="member_account" name="memberAccount">
                     <button type="button" class='textCheck' onclick="idcheck()">중복체크</button>
                 </div>
                 <div id="checkMsg"></div>
+                <input type="text" class="validation-input validation-id">
             </div>
 
             <div class='register_box_pw'>
                 <h5 class='text_style'>비밀번호 *</h5>
-                <input type="password" class="password-input" maxlength='15' name="memberPassword" placeholder="대소문자, 숫자, 특수문자를 포함해서 8~15자 이상" onkeyup="passwordCheck()" autoComplete="off">
+                <input type="password" class="password-input" maxlength='15' name="memberPassword" placeholder="대소문자, 숫자, 특수문자 포함 8~15자 이상" onkeyup="passwordCheck()" autoComplete="off">
             </div>
             <div class="passwordCheck1"></div>
             <div class='register_box_pw'>
@@ -39,12 +38,14 @@
                 </label>
             </div>
             <div class="passwordCheck2"></div>
+            <input type="text" class="validation-input validation-password">
+            <input type="text" class="validation-input validation-passwordCheck">
 
             <div class='register_box_pw'>
                 <h5 class='text_style'>이름</h5>
-                <input type="text" name="memberName">
+                <input type="text" name="memberName" id="memberName">
             </div>
-            <div class='register_box_pw'>
+            <div class='register_box_pw register_box_address'>
                 <h5 class='text_style'>주소</h5>
                 <div class="zipcode-container">
                     <input type="text" id="register_postcode" placeholder="우편번호" name="memberZipcode">
@@ -58,8 +59,8 @@
             <div class='regi_box_phone'>
                 <h5 class='text_style'>휴대폰번호</h5>
                 <div>
-                    <input type="tel" maxlength='13' class='find_Id_box_pw phoneNumber' name="memberPhone" >
-                    <button type="button" class='textCheck' id="sendSmsBtn">발송</button>
+                    <input type="tel" maxlength='13' class='find_Id_box_pw phoneNumber' onkeyup="phoneNum()" id="memberPhone" name="memberPhone">
+                    <button type="button" class='textCheck' id="sendSmsBtn" onclick="sendSms()">발송</button>
                 </div>
                 <div class='regi_box_phone_check' >
                     <input type="text" class='find_Id_box_pw phonenumber-check-input'>
@@ -67,17 +68,20 @@
 
                 </div>
                 <div id="phonenumber-check-warn"></div>
+                <input type="text" class="validation-input validation-phonenumber">
             </div>
 
             <div class='regi_box_phone'>
                 <h5 class='text_style'>추천인코드</h5>
                 <div>
-                    <input type="tel" maxlength='13' class='find_Id_box_pw' name="memberInviteCode">
-                    <button class='textCheck'>확인</button>
+                    <input type="tel" maxlength='13' class='find_Id_box_pw' id="inviteCode" name="memberInviteCode">
+                    <button type="button" class='textCheck' onclick="inviteCodeCheck()">확인</button>
                 </div>
+                <div class="inviteCodeCheck"></div>
             </div>
+            <input type="text" class="validation-input validation-inviteCode">
             
-            <div class='find_id_button'>
+            <div class='fixButton'>
                 <input type="submit" value="가입하기">
             </div>
         </form>

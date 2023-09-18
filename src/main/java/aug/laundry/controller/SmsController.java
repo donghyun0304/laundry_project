@@ -2,9 +2,11 @@ package aug.laundry.controller;
 
 import aug.laundry.service.SendSmsService_kgw;
 import lombok.RequiredArgsConstructor;
+import net.nurigo.java_sdk.exceptions.CoolsmsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
@@ -32,5 +34,10 @@ public class SmsController {
         return map;
 
 
+    }
+
+    @GetMapping("/check/sendSMS")
+    public @ResponseBody String sendSMS(@RequestParam(value="to") String to) throws CoolsmsException {
+        return sendSms.PhoneNumberCheck(to);
     }
 }

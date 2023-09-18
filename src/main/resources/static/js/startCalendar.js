@@ -16,6 +16,7 @@ window.addEventListener('load', function(){
     let todaysTag = document.querySelector('.subDays');
 
     let inputStartDate = document.querySelector('input[name=takeDate]');
+    let inputEndDate = document.querySelector('input[name=deliveryDate]');
 
     // 달력 넘기는 버튼
     let subPreBtn = document.querySelector('#subPreBtn');
@@ -62,6 +63,9 @@ window.addEventListener('load', function(){
 
         if (event.target.className == 'subDay'){
             classClearStart();
+            radioBox.forEach(radio => {
+                radio.checked  = false;
+            })
             event.target.classList.add('select');
             inputStartDate.value = nowYear + '-' + String(nowMonth).padStart(2, '0') + '-' +   String(event.target.textContent).padStart(2,'0');
             timeCheckStart(nowYear, nowMonth, Number(event.target.textContent), fixYear, fixMonth, fixDay);
@@ -72,7 +76,7 @@ window.addEventListener('load', function(){
     })
 
     // 시간 Radio 설정
-    let radioBox = document.querySelectorAll('input[name=subTime]');
+    let radioBox = document.querySelectorAll('input[name=takeDateTime]');
     radioBox.forEach(radio => {
         radio.addEventListener('click', function(){
             let radiosLabel = document.querySelectorAll('.subCalTime label[for^=T]');
@@ -85,8 +89,9 @@ window.addEventListener('load', function(){
             if (regex.test(String(inputStartDate.value))){
                 inputStartDate.value = inputStartDate.value.substring(0, inputStartDate.value.indexOf(" "));
             }
-            inputStartDate.value += ' ' + radio.value;
-            document.querySelector('#pickup').innerHTML = '수거 ' + inputStartDate.value + '시 부터'
+
+            document.querySelector('#pickup').innerHTML = '수거 ' + inputStartDate.value + ' ' + radio.value + '시 부터'
+            radio.checked = true;
             let calendar = document.querySelector('.start');
             let subCalendar = document.querySelector('.startChild');
             let subTime = document.querySelector('.startTime');
@@ -97,21 +102,38 @@ window.addEventListener('load', function(){
             modal.classList.toggle('hidden');
             subTime.classList.toggle('active');
 
-            let endCalendar = document.querySelector('.end');
-            let endSubCalendar = document.querySelector('.endChild');
-            let endModal = document.querySelector('.endModal');
-
-            endCalendar.classList.toggle('calActive');
-            endSubCalendar.classList.toggle('active');
-            endModal.classList.toggle('hidden');
+            changeEndDate(inputStartDate.value, radio.value);
 
         })
 
     })
 
 
-
 })
+
+
+function changeEndDate(startDate, radio){
+    let temp = startDate.split('-');
+    let year = Number(temp[0]);
+    let month = Number(temp[1]);
+    let day = Number(temp[2]);
+    let time = Number(radio);
+    let createDate = new Date(year, month, day + 2); // 배송시간은 수거시간 + 2일로 계산
+
+    let deliveryTime = 'NaN';
+    if (time == 23) {
+        document.querySelector('#E07').checked = true;
+        deliveryTime = '07';
+    } else if (time == 10){
+        document.querySelector('#E18').checked = true;
+        deliveryTime = '18';
+    }
+    let delivery = createDate.getFullYear() + '-' + String(createDate.getMonth()).padStart(2, '0') + '-' + String(createDate.getDate()).padStart(2, '0');
+    document.querySelector('input[name=deliveryDate]').value = delivery;
+
+    document.querySelector('#returns').innerHTML = '배송 ' + delivery + ' ' + deliveryTime + '시 까지'
+
+}
 
 function checkedFalseStart(){
     let radios = document.querySelectorAll('input[name=subTime]');

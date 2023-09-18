@@ -150,7 +150,7 @@ function setAbled(rd, label) {
 
 
 function classClear(){
-    let subDay = document.querySelectorAll('.subDayEnd');
+    let subDay = document.querySelectorAll('.subDaysEnd .end');
     subDay.forEach(li => {
         li.classList.remove('select');
     })

@@ -1,12 +1,7 @@
 package aug.laundry.dao.admin;
 
-import aug.laundry.domain.CommonLaundry;
-import aug.laundry.domain.Drycleaning;
-import aug.laundry.domain.Orders;
-import aug.laundry.domain.Repair;
-import aug.laundry.dto.AdminInspectionDto;
-import aug.laundry.dto.Criteria;
-import aug.laundry.dto.RepairInfoDto;
+import aug.laundry.domain.*;
+import aug.laundry.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -18,47 +13,61 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminInspectionDao {
 
-    private final AdminInspectionMapper mapper;
+    private final AdminInspectionMapper adminInspectionMapper;
 
     public List<AdminInspectionDto> getInspectionList(Criteria cri, Long orderStatus) {
-        return mapper.getInspectionList(cri, orderStatus);
+        return adminInspectionMapper.getInspectionList(cri, orderStatus);
     }
     public int getTotalCount(Long ordersStatus){
-        return mapper.getTotalCount(ordersStatus);
+        return adminInspectionMapper.getTotalCount(ordersStatus);
     }
 
     public AdminInspectionDto getOrderInfo(Long ordersId) {
-        return mapper.getOrderInfo(ordersId);
+        return adminInspectionMapper.getOrderInfo(ordersId);
     }
 
-    public CommonLaundry getCommonLaundryInfo(Long orderDetailId) {
-        return mapper.getCommonLaundryInfo(orderDetailId);
+    public AdminCommonLoundryDto getCommonLaundryInfo(Long orderDetailId) {
+        return adminInspectionMapper.getCommonLaundryInfo(orderDetailId);
     }
 
-    public List<Drycleaning> getDrycleaningInfo(Long orderDetailId) {
-        return mapper.getDrycleaningInfo(orderDetailId);
+    public List<AdminDrycleaningDto> getDrycleaningInfo(Long orderDetailId) {
+        return adminInspectionMapper.getDrycleaningInfo(orderDetailId);
     }
 
-    public List<RepairInfoDto> getRepairInfo(Long orderDetailId) {
-        return mapper.getRepairInfo(orderDetailId);
+    public List<AdminRepairDto> getRepairInfo(Long orderDetailId) {
+        return adminInspectionMapper.getRepairInfo(orderDetailId);
     }
-
-    public int updateCommon(CommonLaundry commonLaundry){
-        return mapper.updateCommon(commonLaundry);
+    public List<String> getRepairImage(Long repairId){
+        return adminInspectionMapper.getRepairImage(repairId);
     }
-    public int updateRepair(Repair repair){
-        return mapper.updateRepair(repair);
+    public int updateCommon(AdminCommonLoundryDto commonLaundryDto){
+        return adminInspectionMapper.updateCommon(commonLaundryDto);
     }
-    public int updateDrycleaning(Drycleaning drycleaning){
-        return mapper.updateDrycleaning(drycleaning);
+    public int updateRepair(AdminRepairDto repair){
+        return adminInspectionMapper.updateRepair(repair);
+    }
+    public int updateDrycleaning(AdminDrycleaningDto drycleaning){
+        return adminInspectionMapper.updateDrycleaning(drycleaning);
     }
     public int updateInspectionStatus(Long ordersId, Long adminId){
-        return mapper.updateInspectionStatus(ordersId, adminId);
+        return adminInspectionMapper.updateInspectionStatus(ordersId, adminId);
     }
     public int updateOrderStatus(Long ordersId){
-        return mapper.updateOrderStatus(ordersId);
+        return adminInspectionMapper.updateOrderStatus(ordersId);
     }
     public AdminInspectionDto getOrderSearchInfo(Long ordersId, Long ordersStatus) {
-        return mapper.getOrderSearchInfo(ordersId, ordersStatus);
+        return adminInspectionMapper.getOrderSearchInfo(ordersId, ordersStatus);
     }
+    public List<InspectionImage> getInspectionImageList(Long ordersId){
+        return adminInspectionMapper.getInspectionImageList(ordersId);
+    }
+
+    public int deleteImage(String inspectionImageStoreName) {
+        return adminInspectionMapper.deleteImage(inspectionImageStoreName);
+    }
+
+    public Long getMemberId(Long ordersId) {
+        return adminInspectionMapper.getMemberId(ordersId);
+    }
+
 }

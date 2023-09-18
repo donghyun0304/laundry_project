@@ -6,12 +6,13 @@
 label{
     width: 100%;
     height: 6rem;
-    border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     cursor: pointer;
     display: inline-block;
     margin-bottom: 0.5rem;
     padding: 1rem;
+    background-color:white;
+    box-shadow: 2px 2px 5px #dadada;
 }
 
 span{
@@ -53,11 +54,11 @@ span{
 .optionbox{
     width: 100%;
     height: 6rem;
-    border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     padding: 1rem;
     font-size: 1.2rem;
     margin-bottom: 0.5rem;
+    box-shadow: 2px 2px 5px #dadada;
 }
 
 .optionbox_title{
@@ -78,10 +79,11 @@ body{
     margin-bottom: clamp(9rem, 3vw, 10rem); /* 푸터의 height 만큼 margin을 주어야지 스크롤이 가능하다. */
 }
 
-.select{
+.select1{
     border: 4px solid var(--main-color);
 }
 
 .select2{
     fill: var(--main-color);
 }
+

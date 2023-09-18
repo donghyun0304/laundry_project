@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @Controller
 @RequiredArgsConstructor
 public class RegisterController {
 
-    private final SendSmsService_kgw sendSms;
     private final MemberService_kgw memberService;
 
     @ResponseBody
@@ -41,14 +41,13 @@ public class RegisterController {
         return msg;
     }
 
-
-    @ResponseBody
-    @RequestMapping(value = "/register", method = {RequestMethod.POST})
-    public Map<String, String> registerUser(@Valid MemberDto memberDto, BindingResult bindingResult){
+    @RequestMapping(value = "/registerAction", method = {RequestMethod.POST})
+    public String registerUser(@Valid MemberDto memberDto, BindingResult bindingResult) {
+        System.out.println(memberDto.toString());
         Map<String, String> validation = new HashMap<>();
-        if(bindingResult.hasErrors()) {
-            throw new IllegalArgumentException("validation 실패");
-            /*
+        if (bindingResult.hasErrors()) {
+            //throw new IllegalArgumentException("validation 실패");
+
             System.out.println("spring validation 실패!");
             validation.put("validation", "실패");
             bindingResult.getAllErrors()
@@ -57,26 +56,37 @@ public class RegisterController {
                         System.err.println("defaultMessage : " + objectError.getDefaultMessage());
                         System.err.println("objectName : " + objectError.getObjectName());
                     });
-            return validation;
-            
-             */
+            return "/register";
+
+        } else {
+            validation.put("validation", "성공");
+            memberService.registerUser(memberDto);
         }
 
-        validation.put("validation", "성공");
-        return validation;
+        return "redirect:/login";
 
     }
 
+    @ResponseBody
+    @GetMapping("/inviteCode/{inviteCode}")
+    public Map<String, Object> getInviteCode(@PathVariable String inviteCode){
+        int res = memberService.inviteCodeCheck(inviteCode);
+        Map<String, Object> map = new HashMap<>();
+        if(res > 0){
+            map.put("result", res);
+            map.put("resultMsg", "사용가능한 코드입니다.");
+        }else{
+            map.put("result", res);
+            map.put("resultMsg", "코드를 다시 확인해주세요.");
+        }
 
+        return map;
+    }
 
-
-
-
-
-
-
-
-
+    @GetMapping("/register")
+    public String goRegister(){
+        return "project_register";
+    }
 
 
 }

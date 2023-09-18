@@ -8,8 +8,73 @@
     justify-content: center;
     gap: 1rem;
 }
+.floor.status{
+    height: 9rem;
+}
 
 .banner{
+    overflow: hidden;
+    width: 100%;
+    height: inherit;
+    border-radius: var(--border-radius);
+    background-color: white;
+    box-shadow: 2px 2px 5px #dadada;
+    position: relative;
+}
+.banner a{
+    width: 100%;
+    height: 100%;
+    display: inline-block;
+    white-space: nowrap;
+    border: none;
+    border-radius: var(--border-radius);
+    background-size: 100% 100%;
+}
+
+#banner1{
+    background-image: url(/images/banner1.png);
+
+}
+
+#banner5{
+    background-image: url(/images/banner1.png);
+
+}
+
+#banner2{
+    background-image: url(/images/banner2.png);
+
+}
+
+#banner4{
+    background-image: url(/images/banner2.png);
+
+}
+
+#banner3{
+    background-image: url(/images/banner3.png);
+   /*animation: fadeOut 5s;*/
+}
+/*
+@keyframes fadein {
+    from{
+        opacity:0.5;
+    }
+    to {
+        opacity:1;
+    }
+}
+@keyframes fadeOut {
+    from{
+        opacity:1;
+    }
+    to{
+        opacity:0.5;
+    }
+}
+*/
+.floor .ball{
+    position: absolute;
 
 }
 
@@ -18,28 +83,96 @@
     height: 100%;
     border-radius: var(--border-radius);
     line-height: 7rem;
-
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     box-shadow: 2px 2px 5px #dadada;
-    border: 1px solid #dadada;
+    background-color: white;
 }
-
-.laundry{
+#laundry{
     width: 70%;
-    background-color: var(--main-font-color);
+    background: var(--main-font-color);
+    color: white;
+    padding: 0.5rem;
+    line-height: initial;
+}
+#pass{
+    width: 180%;
+    background-color: var(--main-color);
     color: white;
 }
-.pass{
+#pass2{
     width: 180%;
     background-color: var(--main-color);
     color: white;
 }
 
-.inviteCoupon{
-    width: 8rem;
+.imgBox{
+    width: 4rem;
     height: 4rem;
+    border-radius: var(--border-radius);
+    display: flex;
+}
+
+.imgBox img{
+    width: 4rem;
+    filter: invert(95%) sepia(100%) saturate(0%) hue-rotate(6deg) brightness(102%) contrast(101%);
+}
+.imgBox svg{
+    width: 2.3rem;
+}
+#use, #price, #pass, #order{
+    padding: 0.5rem;
+    line-height: initial;
+}
+
+#pass{
+    display: flex;
+    align-items: center;
+}
+
+#pass2{
+    display: flex;
+    align-items: center;
+}
+
+.friend{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.friend .warp{
+    width: 100%;
+    margin: 0;
+    padding-left: 1.5rem;
+}
+.warp span{
+    white-space: initial;
+    line-height: initial;
+    display: block;
+    text-align: left;
+}
+.title{
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+.content{
+    color: var(--gray);
+}
+
+
+.col{
+    color: white;
+}
+
+
+
+
+.inviteCoupon{
+    width: 7rem;
+    height: 3.5rem;
     border: none;
     border-left: 0.6rem solid var(--main-color);
     border-radius: var(--border-radius);
@@ -53,16 +186,6 @@
     line-height: initial;
 }
 
-.inviteCoupon .empty{
-    width: 1rem;
-    height: 1rem;
-    background-color: white;
-    position: absolute;
-    right: -0.5rem;
-    top: calc(50% - 0.5rem);
-    border-radius: 100%;
-    box-shadow: 2px 2px 5px rgb(86,86,86) inset;
-}
 .couponTitle{
     color: var(--main-color);
     font-size: 1rem;
@@ -71,7 +194,7 @@
 }
 .couponPrice span{
     font-family: 'Pretendard-Bold';
-    font-size: 1.5rem;
+    font-size: 1.3rem;
 }
 
 .couponPrice .couponPointBox{
@@ -91,12 +214,134 @@
 
 .first{
     position: absolute;
-    left: 1rem;
-    top: 1rem;
+    right: 1rem;
+    top: calc(50% - 1.75rem);
 }
 
-.second{
+
+.pass {
     position: absolute;
-    left: 2rem;
-    top: 2rem;
+    top: -20%;
+    left: 50%;;
+    margin: 0;
+    display: inline-block;
+    border: 2px solid green;
+    border-radius: var(--border-radius);
+    height: 2rem;
+    line-height: 2rem;
+    width: 4rem;
+    background-color: rgb(33, 33, 33);
+    color: green;
+    font-size: large;
+    text-align: center;
+}
+
+
+.infomation{
+    width: 100%;
+    height: 2rem;
+}
+
+.progressBar{
+    width: calc(100% - 1.8rem);
+    height: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin: 0 0.9rem;
+
+}
+
+.progressBarTitle{
+    margin: 0;
+    width: 100%;
+    height: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dot{
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background-color: var(--main-font-color);
+    margin: 0;
+}
+
+.bar{
+    width: calc(100% - 0.8rem);
+    height: 0.4rem;
+    background-color: var(--main-font-color);
+    position: absolute;
+    left: 0.4rem;
+}
+.now{
+    position: absolute;
+    animation: sizeChange 0.4s alternate infinite;
+}
+
+
+@keyframes sizeChange {
+
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1.2);
+    }
+
+}
+
+.barTitle{
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--gray);
+}
+
+#order{
+    white-space: initial;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.orderTitle{
+    text-align: left;
+    margin: 0.5rem 0 0.8rem 0;
+}
+
+.orderStatus{
+    width: 100%;
+    text-align: left;
+    display: inline-block;
+    font-size: large;
+    margin-bottom: 0.3rem;
+}
+.orderContent{
+    width: 100%;
+    text-align: left;
+    display: inline-block;
+    color: var(--gray);
+}
+.orderText{
+    margin: 0;
+}
+
+#left, #right{
+    position: absolute;
+    top: calc(50% - 1rem);
+    margin: 0;
+}
+
+.arrow svg{
+    width: 1rem;
+}
+
+.arrow #right{
+    right: 0.5rem
+}
+.arrow #left{
+    left: 0.5rem;
+    transform: rotate(180deg);
 }

@@ -27,3 +27,7 @@ header .func{
 header .func a{
     text-decoration: underline;
 }
+
+#home{
+    rotate: 0deg;
+}

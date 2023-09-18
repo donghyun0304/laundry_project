@@ -1,22 +1,21 @@
 package aug.laundry.controller;
 
-import aug.laundry.domain.CommonLaundry;
-import aug.laundry.domain.Drycleaning;
-import aug.laundry.domain.Repair;
 import aug.laundry.dto.AdminInspectionDto;
 import aug.laundry.dto.Criteria;
-import aug.laundry.dto.DrycleaningListDto;
-import aug.laundry.dto.RepairListDto;
-import aug.laundry.enums.fileUpload.FileUploadType;
+import aug.laundry.dto.InspectionDataDto;
 import aug.laundry.service.AdminInspectionService_ksh;
-import aug.laundry.service.FileUploadService_ksh;
+import aug.laundry.service.OrdersService_kdh;
+import aug.laundry.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,14 +25,18 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AdminInspectionController {
 
-    private final AdminInspectionService_ksh adminInspectionService_ksh;
 
-    @GetMapping("/admin")
-    public String getInspectionView() {
+
+    private final AdminInspectionService_ksh adminInspectionService_ksh;
+    private final PaymentService paymentService;
+    private final OrdersService_kdh ordersServiceKdh;
+
+    @GetMapping("/admin/{adminId}")
+    public String getInspectionView(@PathVariable("adminId") Long adminId) {
         return "project_manager_order_list";
     }
-    @GetMapping("/admin/complete")
-    public String getInspectedList() {
+    @GetMapping("/admin/complete/{adminId}")
+    public String getInspectedList(@PathVariable("adminId") Long adminId) {
         return "project_manager_order_list_complete";
     }
     @GetMapping("/getList/{pageNo}/{orderStatus}")
@@ -71,7 +74,7 @@ public class AdminInspectionController {
         return searchOrder;
     }
 
-    @GetMapping("/admin/{adminId}/{ordersId}")
+    @GetMapping("/admin/view/{adminId}/{ordersId}")
     public String viewInspectionDetail(@PathVariable("adminId") Long adminId,
                                       @PathVariable("ordersId") Long ordersId, Model model) {
 
@@ -80,28 +83,85 @@ public class AdminInspectionController {
         return "project_manager_order_detail";
     }
 
-    @PostMapping("/admin/{adminId}/{ordersId}")
-    public String writeInsepctionResult(AdminInspectionDto adminInfo, CommonLaundry commonLaundry,
-                                        @PathVariable("adminId") Long adminId, @PathVariable("ordersId") Long ordersId,
-                                        @ModelAttribute(value = "DrycleaningListDto") DrycleaningListDto drycleanings,
-                                        @ModelAttribute(value = "RepairListDto") RepairListDto repairs,
-                                        List<MultipartFile> files) {
-        try{
-            adminInspectionService_ksh.updateInspectionResult(adminInfo, commonLaundry, adminId,
-                    drycleanings.getDrycleaningList(), repairs.getRepairList(), files);
-        }catch(Exception e){
-            // 예외처리
-            log.info("exception={}", e);
+    @PostMapping("/admin/view/{adminId}/{ordersId}")
+    public @ResponseBody Map<String, String> writeInspection( @PathVariable("adminId") Long adminId, @PathVariable("ordersId") Long ordersId,
+                                                 @Valid @RequestPart("inspectionDataDto")  InspectionDataDto inspectionDataDto, BindingResult bindingResult,
+                                                 @RequestPart("file") List<MultipartFile> files) {
+        Map<String, String> data = new HashMap<>();
+
+        if(bindingResult.hasErrors()){
+            data.put("result", "errors");
+            data.put("errors", bindingResult.getFieldError().getDefaultMessage());
+            return data;
         }
-        // 다시 등록되지않게 처리하기
-        return "redirect:/admin";
+
+        try {
+            log.info("memberId={}", adminInspectionService_ksh.getMemberId(ordersId));
+
+            adminInspectionService_ksh.updateInspectionResult(adminId, ordersId, inspectionDataDto, files);
+
+            //검수후 주문 예상금액 업데이트
+            Map<String, Long> prices = paymentService.makePrices(ordersId, adminInspectionService_ksh.getMemberId(ordersId));
+            ordersServiceKdh.updateExpectedPriceByOrdersId(ordersId, prices.get("totalPriceWithDeliveryPrice"));
+
+            data.put("result", "success");
+
+        } catch (RuntimeException e) {
+            data.put("result", "fail");
+            data.put("error", e.getMessage());
+        }
+        return data;
     }
 
-    @GetMapping("/admin/complete/{ordersId}")
-    public String viewInspectionCompleteDetail(@PathVariable("ordersId") Long ordersId, Model model) {
+    @GetMapping("/admin/complete/view/{adminId}/{ordersId}")
+    public String viewInspectionCompleteDetail(@PathVariable("adminId") Long adminId,
+                                               @PathVariable("ordersId") Long ordersId, Model model) {
 
         model.addAttribute("info", adminInspectionService_ksh.getInspectionDetail(ordersId));
 
         return "project_manager_order_complete_detail";
+    }
+
+    @GetMapping("/admin/edit/view/{adminId}/{ordersId}")
+    public String viewEditInspectionDetail(@PathVariable("adminId") Long adminId, @PathVariable("ordersId") Long ordersId,
+                                       Model model) {
+
+        model.addAttribute("info", adminInspectionService_ksh.getInspectionDetail(ordersId));
+        return "project_manager_order_detail_edit";
+    }
+
+    @PostMapping("/admin/edit/view/{adminId}/{ordersId}")
+    public @ResponseBody Map<String, String> editInspection(@PathVariable("adminId") Long adminId, @PathVariable("ordersId") Long ordersId,
+                                                            @Valid @RequestPart("inspectionDataDto")  InspectionDataDto inspectionDataDto, BindingResult bindingResult,
+                                                            @RequestPart(name="file", required = false) List<MultipartFile> files) {
+        Map<String, String> data = new HashMap<>();
+        Map<String, String> result = adminInspectionService_ksh.deleteImageFile(inspectionDataDto.getDeleteFileList());
+
+        if(bindingResult.hasErrors()){
+            data.put("result", "errors");
+            data.put("errors", bindingResult.getFieldError().getDefaultMessage());
+            return data;
+        }
+
+        try {
+            adminInspectionService_ksh.updateInspectionResult(adminId, ordersId, inspectionDataDto, files);
+
+            //검수후 주문 예상금액 업데이트
+            Map<String, Long> prices = paymentService.makePrices(ordersId, adminInspectionService_ksh.getMemberId(ordersId));
+            ordersServiceKdh.updateExpectedPriceByOrdersId(ordersId, prices.get("totalPriceWithDeliveryPrice"));
+
+            data.put("result", "success");
+        } catch (RuntimeException e) {
+            data.put("result", "fail");
+            data.put("error", e.getMessage());
+        }
+
+        if(result.isEmpty()) {
+            result.forEach((key, value) -> {
+                log.info("error={}", value);
+            });
+        }
+
+        return data;
     }
 }

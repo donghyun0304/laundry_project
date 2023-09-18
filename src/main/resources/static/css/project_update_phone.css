@@ -1,8 +1,3 @@
-body{
-    height: calc(100vh - clamp(4rem, 3vw, 5rem) - 2rem);
-}
-
-
 .container .intro{
     font-size: 1.5rem;
 }
@@ -46,3 +41,17 @@ input[type=submit]{
 .errorsborder{
     border: 2px solid rgb(255, 114, 114);
 }
+
+.errors.message{
+    font-size: 1.2rem;
+}
+
+.errorBox{
+    text-align: center;
+}
+
+.errors svg{
+    width: 1.2rem;
+    fill: rgb(48, 180, 31);
+}
+

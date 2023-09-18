@@ -14,8 +14,8 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 public class UpdatePhoneDto {
 
-//  @Pattern(regexp = "^(01[0|1|6|7|8|9]{1})?[0-9]{3,4}?[0-9]{4}$")
   @Pattern(regexp =  "(01)([016789]{1})(-)([0-9]{3,4})(-)([0-9]{4})")
+  @NotBlank
   private String memberPhone;
 
 

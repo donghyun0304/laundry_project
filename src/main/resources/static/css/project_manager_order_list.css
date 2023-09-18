@@ -131,8 +131,8 @@
     border-bottom: 1px solid black;
 }
 .select_category li {
-    width: 50%; 
-    height: 3rem; 
+    width: 50%;
+    height: 3rem;
     background-color: var(--main-font-color);
     margin: 0;
     display: flex;

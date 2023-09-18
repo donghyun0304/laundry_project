@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="/css/project_footer.css">
     <link rel="stylesheet" href="/css/project_header.css">
     <link rel="stylesheet" href="/css/project_invite.css">
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <script src="/js/project_invite.js"></script>
 
     <title>Document</title>
 </head>
@@ -53,7 +55,7 @@
             <span class='infoContent'>나도 친구도 모두 5,000원 포인트를 드려요.</span>
         </div>
         <div class='invite_icon'>
-            <button type="button" class='invite_kakao' onclick="kakaoShare()">
+            <button type="button" class='invite_kakao' onclick="kakaoShare();">
                 <svg viewBox="0 0 32 32" focusable="false" role="presentation" class="withIcon_icon__2KxnX" aria-hidden="true"><path d="M16 4.64c-6.96 0-12.64 4.48-12.64 10.08 0 3.52 2.32 6.64 5.76 8.48l-.96 4.96 5.44-3.6 2.4.16c6.96 0 12.64-4.48 12.64-10.08S22.96 4.56 16 4.64z"></path></svg>
             </button>
 <!--            <button class='invite_share'>-->
@@ -63,18 +65,14 @@
     </div>
 </body>
 <footer th:replace="~{/common/project_footer :: footer}"> </footer>
-<script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-
-<script type="text/javascript">
-
-    // SDK를 초기화 합니다. 사용할 앱의 JavaScript 키를 설정해 주세요.
-    Kakao.init('7f5f612c37590a5d3b0a2cfec0c466a4');
-
-    // SDK 초기화 여부를 판단합니다.
-    console.log(Kakao.isInitialized());
-
-
+<script>
      function kakaoShare() {
+
+     // SDK를 초기화 합니다. 사용할 앱의 JavaScript 키를 설정해 주세요.
+    if (!Kakao.isInitialized()) {
+        Kakao.init('7f5f612c37590a5d3b0a2cfec0c466a4');
+    };
+
       Kakao.Link.sendDefault({
         objectType: 'feed',
         content: {
@@ -82,16 +80,16 @@
           description: '초대받고 가입하면 초대받은 친구도 초대한 친구도 5,000P 적립 혜택!',
           imageUrl: 'https://blog.kakaocdn.net/dn/bI9Kl8/btssfQ5fx4u/PAykLrfZ9OD5YfYv82jKVk/img.png',
           link: {
-            mobileWebUrl: '/test/4',
-            webUrl: '/test/4',
+            mobileWebUrl: 'https://17da-183-96-143-101.ngrok-free.app',
+            webUrl: 'https://17da-183-96-143-101.ngrok-free.app',
           },
         },
         buttons: [
           {
-            title: '웹으로 보기',
+            title: '세탁하러 가기',
             link: {
-              mobileWebUrl: '카카오공유하기 시 클릭 후 이동 경로',
-              webUrl: '카카오공유하기 시 클릭 후 이동 경로',
+              mobileWebUrl: 'https://17da-183-96-143-101.ngrok-free.app',
+              webUrl: 'https://17da-183-96-143-101.ngrok-free.app',
             },
           },
         ],

@@ -3,10 +3,7 @@ package aug.laundry.service;
 import aug.laundry.domain.CommonLaundry;
 import aug.laundry.domain.Drycleaning;
 import aug.laundry.domain.Repair;
-import aug.laundry.dto.AdminInspectionDto;
-import aug.laundry.dto.Criteria;
-import aug.laundry.dto.DrycleaningListDto;
-import aug.laundry.dto.RepairListDto;
+import aug.laundry.dto.*;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,6 +23,9 @@ public interface AdminInspectionService_ksh {
 
     AdminInspectionDto getOrderSearchInfo(Long ordersId, Long ordersStatus);
 
-    int updateInspectionResult(AdminInspectionDto adminInfo, CommonLaundry commonLaundry, Long adminId,
-                               List<Drycleaning> drycleanings, List<Repair> repairs, List<MultipartFile> files) throws Exception;
+    void updateInspectionResult(Long adminId, Long ordersId, InspectionDataDto inspectionDataDto,
+                               List<MultipartFile> files);
+
+    Map<String, String> deleteImageFile(List<String> fileNames);
+    Long getMemberId(Long ordersId);
 }

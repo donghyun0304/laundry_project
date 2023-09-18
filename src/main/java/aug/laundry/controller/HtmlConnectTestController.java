@@ -75,6 +75,8 @@ public class HtmlConnectTestController {
     public String http13() {
         return "project_order_2_1";
     }
+
+    // 수선 위에 수선에 대한 이미지 하나만 채워주세요.
     @GetMapping("/test/14")
     public String http14() {
         return "project_order_2_2";
@@ -83,6 +85,8 @@ public class HtmlConnectTestController {
     public String http15() {
         return "project_point";
     }
+
+    // 포인트에 이미지 윤곽드러나는거 확인해주세요.
     @GetMapping("/test/16")
     public String http16() {
         return "project_use_point";
@@ -91,6 +95,8 @@ public class HtmlConnectTestController {
     public String http17() {
         return "project_use_coupon";
     }
+
+    // css 확인아직 못함
     @GetMapping("/test/18")
     public String http18() {
         return "project_order_view";
@@ -111,6 +117,7 @@ public class HtmlConnectTestController {
         return "project_mypage_list";
     }
 
+    // css 확인 못함
     @GetMapping("/test/22")
     public String http22() { return "project_rider_list_on_call"; }
 
@@ -142,4 +149,13 @@ public class HtmlConnectTestController {
         return "project_manager_order_detail";
     }
 
+    @GetMapping("/test/29")
+    public String http29() {
+        return "project_main";
+    }
+
+    @GetMapping("/test/30")
+    public String http30() {
+        return "project_price_tag";
+    }
 }

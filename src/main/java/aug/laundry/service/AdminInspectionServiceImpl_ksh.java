@@ -3,24 +3,35 @@ package aug.laundry.service;
 import aug.laundry.dao.admin.AdminInspectionDao;
 import aug.laundry.domain.CommonLaundry;
 import aug.laundry.domain.Drycleaning;
+import aug.laundry.domain.InspectionImage;
 import aug.laundry.domain.Repair;
 import aug.laundry.dto.*;
 import aug.laundry.enums.category.Category;
 import aug.laundry.enums.fileUpload.FileUploadType;
+import aug.laundry.enums.repair.RepairCategory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AdminInspectionServiceImpl_ksh implements AdminInspectionService_ksh{
+
+    @Value("${file.dir}")
+    private String fileDir;
 
     private final AdminInspectionDao adminInspectionDao;
     private final FileUploadService_ksh fileUpload;
@@ -44,34 +55,54 @@ public class AdminInspectionServiceImpl_ksh implements AdminInspectionService_ks
 
         detailInfo.put("orderDetailId", orderDetailId);
 
-        // 나중에 오류처리 추가해두기
         detailInfo.put("orderInfo", adminInspectionDao.getOrderInfo(ordersId));
 
-        CommonLaundry commonLaundry = adminInspectionDao.getCommonLaundryInfo(orderDetailId);
+        AdminCommonLoundryDto commonLaundry = adminInspectionDao.getCommonLaundryInfo(orderDetailId);
         if(commonLaundry == null){
             detailInfo.put("commonLaundryInfo", null);
         } else {
             detailInfo.put("commonLaundryInfo", commonLaundry);
         }
 
-        List<Drycleaning> drycleaningInfo = adminInspectionDao.getDrycleaningInfo(orderDetailId);
+        List<AdminDrycleaningDto> drycleaningInfo = adminInspectionDao.getDrycleaningInfo(orderDetailId);
         if(drycleaningInfo.size() == 0){
             detailInfo.put("drycleaningInfo", null);
         } else {
-            for (Drycleaning drycleaning : drycleaningInfo) {
+            for (AdminDrycleaningDto drycleaning : drycleaningInfo) {
                 drycleaning.setDrycleaningCategory(Category.valueOf(drycleaning.getDrycleaningCategory()).getTitle());
             }
             detailInfo.put("drycleaningInfo", drycleaningInfo);
         }
 
-        List<RepairInfoDto> repairInfo = adminInspectionDao.getRepairInfo(orderDetailId);
-        if(repairInfo.size() == 0){
+        List<AdminRepairDto> repairInfo = adminInspectionDao.getRepairInfo(orderDetailId);
+
+        // 수선 주문에 대한 이미지
+        List<RepairInfoDto> repairInfoDtos = repairInfo.stream().map(repair -> {
+            RepairInfoDto repairInfoDto = new RepairInfoDto();
+            repairInfoDto.setRepairId(repair.getRepairId());
+            repairInfoDto.setOrdersDetailId(repair.getOrdersDetailId());
+            repairInfoDto.setRepairRequest(repair.getRepairRequest());
+            repairInfoDto.setRepairCategory(repair.getRepairCategory());
+            repairInfoDto.setRepairPossibility(repair.getRepairPossibility());
+            repairInfoDto.setRepairNotReason(repair.getRepairNotReason());
+            repairInfoDto.setRepairImageStoreName(adminInspectionDao.getRepairImage(repair.getRepairId()));
+            return repairInfoDto;
+        }).collect(Collectors.toList());
+
+        if(repairInfoDtos.size() == 0){
             detailInfo.put("repairInfo", null);
         } else {
-            for (RepairInfoDto repairInfoDto : repairInfo) {
-                repairInfoDto.setRepairCategory(Category.valueOf(repairInfoDto.getRepairCategory()).getTitle());
+            for (RepairInfoDto repairInfoDto : repairInfoDtos) {
+                repairInfoDto.setRepairCategory(RepairCategory.valueOf(repairInfoDto.getRepairCategory()).getTitle());
             }
-            detailInfo.put("repairInfo", repairInfo);
+            detailInfo.put("repairInfo", repairInfoDtos);
+        }
+
+        List<InspectionImage> imageList = adminInspectionDao.getInspectionImageList(ordersId);
+        if(imageList.size() == 0){
+            detailInfo.put("imageList", null);
+        } else {
+            detailInfo.put("imageList", imageList);
         }
 
         return detailInfo;
@@ -84,31 +115,55 @@ public class AdminInspectionServiceImpl_ksh implements AdminInspectionService_ks
 
     @Transactional
     @Override
-    public int updateInspectionResult(AdminInspectionDto adminInfo, CommonLaundry commonLaundry, Long adminId,
-                                      List<Drycleaning> drycleanings, List<Repair> repairs, List<MultipartFile> files) throws Exception {
-        // 검수 저장
+    public void updateInspectionResult(Long adminId, Long ordersId, InspectionDataDto inspectionDataDto,
+                                      List<MultipartFile> files){
 
-        int res = 0;
-
-        if(commonLaundry.getCommonLaundryId() != null) {
-            adminInspectionDao.updateCommon(commonLaundry);
+        if(inspectionDataDto.getCommonLaundryDto() != null) {
+            adminInspectionDao.updateCommon(inspectionDataDto.getCommonLaundryDto());
         }
-        if(repairs != null) {
-            for (Repair repair : repairs) {
-                adminInspectionDao.updateRepair(repair);
+        if(inspectionDataDto.getRepairList() != null) {
+           inspectionDataDto.getRepairList().forEach(repair -> adminInspectionDao.updateRepair(repair));
+        }
+
+        if(inspectionDataDto.getDrycleaningList() != null) {
+            inspectionDataDto.getDrycleaningList().forEach(drycleaning -> adminInspectionDao.updateDrycleaning(drycleaning));
+        }
+
+        if (inspectionDataDto.getDeleteFileList() != null) {
+            inspectionDataDto.getDeleteFileList().forEach(fileName -> adminInspectionDao.deleteImage(fileName));
+        }
+
+        adminInspectionDao.updateInspectionStatus(ordersId, adminId);
+        adminInspectionDao.updateOrderStatus(ordersId);
+
+        if (files != null) {
+            fileUpload.saveFile(files, inspectionDataDto.getInspectionId(), FileUploadType.INSPECTION);
+        }
+    }
+
+    @Override
+    public Map<String, String> deleteImageFile(List<String> fileNames) {
+
+        Map<String, String> map = new HashMap<>();
+
+        fileNames.forEach(fileName -> {
+            int index=0;
+            // 경로 지정
+            Path imagePath = Paths.get(fileDir+fileName);
+            try {
+                Files.deleteIfExists(imagePath);
+            } catch (IOException e) {
+                map.put("result", "fail");
+                map.put("error"+index, fileName+"="+e.getMessage());
             }
-        }
-        if(drycleanings != null) {
-            for (Drycleaning drycleaning : drycleanings) {
-                adminInspectionDao.updateDrycleaning(drycleaning);
-            }
-        }
-        adminInspectionDao.updateInspectionStatus(adminInfo.getOrdersId(), adminId);
-        adminInspectionDao.updateOrderStatus(adminInfo.getOrdersId());
+        });
 
-        fileUpload.saveFile(files, adminInfo.getInspectionId(), FileUploadType.INSPECTION);
+        return map;
+    }
 
-        return res;
+    @Override
+    public Long getMemberId(Long ordersId) {
+        return adminInspectionDao.getMemberId(ordersId);
     }
 
 }

@@ -15,34 +15,36 @@
 <header th:replace="~{/common/project_header :: header}"></header>
 <body>
     <div class='container'>
-        <form class='login_form' method="post" action="/login">
+        <form class='login_form' method="post" action="/login/loginAction">
             <div class='login_logo'>
-                로고자리
+                <img src="/images/main_logo.jpg" class="login_logo_img">
             </div>
             <div class='login_box_id'>
                 <h5>아이디</h5>
-                <input type="text   " placeholder='예) email@naver.com' name="memberAccount">
+                <input type="text" name="memberAccount"  th:value="${memberAccount}">
             </div>
             <div class='login_box_pw'>
                 <h5>비밀번호</h5>
-                <input type="password" maxlength='15' name="memberPassworld">
+                <input type="password" maxlength='15' name="memberPassword">
             </div>
+            <div class="errorMsg">[[${errorMsg}]]</div>
             <div class='login_button'>
-                <input type="submit" value="로그인">
+                <a onclick="formSubmit()">로그인</a>
             </div>
-            
             <div class='login_look'>
-                <div><a href="http://127.0.0.1:5502/Project_regi.html">회원가입</a></div>
-                <div><a href="#">이메일 찾기</a></div>
-                <div><a href="#">비밀번호 찾기</a></div>
+                <div><a href="/register">회원가입</a></div>
+                <div><a href="/login/find-account">아이디 찾기</a></div>
+                <div><a href="/login/find-pw">비밀번호 찾기</a></div>
             </div>
             <div class='login_social_login'>
-                <button type="button" class="login_naver" onclick="location.href='https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=1zyMGeTLflNJkh2bmICN&state=1234&redirect_uri=http://localhost:8080/login/naver_callback'">네이버 로그인</button>
-                <button type="button" class='login_kakao' onclick="location.href='https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=6ceec1b5aece169e4582fd82601abd44&redirect_uri=http://localhost:8080/kakaoLogin'"> 카카오 로그인</button>
+                <button type="button" class="login_naver" onclick="naverLogin()">네이버 로그인</button>
+                <button type="button" class='login_kakao' onclick="kakaoLogin()"> 카카오 로그인</button>
                 <span th:text="${body}"></span>
             </div>
+            <input type="hidden" id="redirectURL" name="redirectURL" th:value="${param.redirectURL}">
         </form>
     </div>
+<script src="/js/project_login.js"></script>
 </body>
 <footer th:replace="~{/common/project_footer :: footer}"> </footer>
 </html>

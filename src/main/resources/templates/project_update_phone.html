@@ -21,7 +21,10 @@
             <input type="tel" name="phoneCheck" id="phoneCheck" placeholder='인증번호 입력'>
             <button type='button' id="smsValueCheck">인증번호 확인</button>
             <div class="errors"></div>
-            <input type="submit" id="button_phoneChange" value="변경하기">
+            <div class="errorBox"><span class="errors message" th:text="${msg}"></span></div>
+            <div class="fixButton">
+                <input type="submit" id="button_phoneChange" value="변경하기">
+            </div>
         </form>
         <input type="hidden" value='0' id="phoneCheckRes">
     </div>

@@ -15,4 +15,8 @@ public enum CategoryPriceCalculator {
     protected Long calculate(Long value) {
         return this.expression.apply(value);
     }
+
+    public Float percent() {
+        return this.expression.apply(100L) / 100.0f;
+    }
 }

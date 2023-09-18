@@ -1,23 +1,17 @@
 package aug.laundry.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderInfo {
 
-    private Long isQuick;
-    private Long isDry;
-    private Long isCommon;
-    private Long isRepair;
+    private boolean isQuick;
+    private boolean isDry;
+    private boolean isCommon;
+    private boolean isRepair;
 
-    public OrderInfo(Long isQuick, Long isDry, Long isCommon, Long isRepair) {
-        this.isQuick = isQuick;
-        this.isDry = isDry;
-        this.isCommon = isCommon;
-        this.isRepair = isRepair;
-    }
 }

@@ -5,11 +5,14 @@
     <title>Title</title>
     <link rel="stylesheet" href="/css/common.css">
     <link rel="stylesheet" href="/css/project_manager_order_list.css">
-
 </head>
 <body>
   <aside class='res_box' th:fragment="manager_header">
     <script>
+      /*<![CDATA[*/
+      const memberId = [[${session.memberId != null ? session.memberId : 'null'}]];
+      /*]]>*/
+
       let pageNo = 1;
       let realEnd = 1;
       window.addEventListener('load', function () {
@@ -21,12 +24,9 @@
         bthSearch.addEventListener('click', searchEvent);
 
         btnReset.addEventListener('click', function () {
-          const orderStatus = document.querySelector('#inspectionStatus').value;
-          if(orderStatus == 5) {
-            location.href='/admin';
-          } else {
-            location.href='/admin/complete';
-          }
+          document.querySelector('#resBox').innerHTML = '';
+          pageNo=1;
+          getList();
         });
       });
 
@@ -71,7 +71,7 @@
         if(res === 'success') {
           if(list.length>0) {
             list.forEach(order=>{
-              const url = orderStatus == 5 ? '/admin/9/'+order.ordersId : '/admin/complete/'+order.ordersId;
+              const url = orderStatus == 5 ? '/admin/view/'+memberId+'/'+order.ordersId : '/admin/complete/view/'+memberId+'/'+order.ordersId;
               const quick = order.quickLaundryId!=null ? '빠른세탁' : '';
               divlist+='<div class="order_box" onclick="location.href=\''+url+'\'">'
                       + '<div class="date_status">'
@@ -106,7 +106,7 @@
         const res = map.res;
 
         if(res === 'success') {
-          const url = orderStatus == 5 ? '/admin/9/'+orderInfo.ordersId : '/admin/complete/'+orderInfo.ordersId;
+          const url = orderStatus == 5 ? '/admin/view/'+memberId+'/'+orderInfo.ordersId : '/admin/complete/view/'+orderInfo.ordersId;
           const quick = orderInfo.quickLaundryId!=null ? '빠른세탁' : '';
           resBox.innerHTML='<div class="order_box" onclick="location.href=\''+url+'\'">'
                     + '<div class="date_status">'
@@ -120,16 +120,17 @@
         } else {
           resBox.innerHTML= '찾으시는 주문번호가 존재하지 않습니다.';
         }
+        document.querySelector('#orderIdSearch').value='';
       }
     </script>
 
     <div class='select_category'>
       <ul>
-        <li class='active'>
-          <a href="/admin">검수대기</a>
+        <li class="active" id="liOne">
+          <a th:href="@{'/admin/'+${session.memberId}}">검수대기</a>
         </li>
-        <li>
-          <a href="/admin/complete">검수완료</a>
+        <li id="liTwo">
+          <a th:href="@{'/admin/complete/'+${session.memberId}}">검수완료</a>
         </li>
       </ul>
     </div>
@@ -138,8 +139,6 @@
       <input type='text' class='searchbox' id='orderIdSearch' placeholder='주문번호 검색'>
       <button type='button' id="bthSearch">검색</button>
       <button type='button' id="btnReset">초기화</button>
-      <!--초기화는 전체검색으로 전환-->
-      <!-- JAX로 검색할 것-->
     </div>
     <hr>
   </aside>

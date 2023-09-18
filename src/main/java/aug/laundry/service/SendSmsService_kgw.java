@@ -1,5 +1,6 @@
 package aug.laundry.service;
 
+import net.nurigo.java_sdk.exceptions.CoolsmsException;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -8,7 +9,9 @@ import org.springframework.stereotype.Service;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Random;
+import net.nurigo.java_sdk.api.Message;
 
 @Service
 public class SendSmsService_kgw {
@@ -36,7 +39,7 @@ public class SendSmsService_kgw {
 
         bodyJson.put("type" , "SMS");
         bodyJson.put("contentType" , "COMM");
-        bodyJson.put("countryCode" , "82");
+        bodyJson.put("countryCode" , "81");
         bodyJson.put("from" , "01081208867");
         bodyJson.put("subject" , "인증번호는 " + number + " 입니다.");
         bodyJson.put("content" , number);
@@ -107,5 +110,31 @@ public class SendSmsService_kgw {
 
         return resultNum;
     }
+
+    public static String PhoneNumberCheck(String to) throws CoolsmsException {
+
+        String api_key = "NCSOOIIA3GBBPHYM";
+        String api_secret = "IVTBRAJKJAGL4TNR8VTUFFFGAECHP4UI";
+        Message coolsms = new Message(api_key, api_secret);
+
+        Random rand  = new Random();
+        String numStr = "";
+        for(int i=0; i<4; i++) {
+            String ran = Integer.toString(rand.nextInt(10));
+            numStr+=ran;
+        }
+        to = to.replaceAll("-", "");
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("to", to);    // 수신전화번호(ajax로 view 화면에서 받아온 값으로 넘김)
+        params.put("from", "01035674431");    // 발신전화번호, 테스트시에는 발신, 수신 둘다 본인 번호로 하면 됨
+        params.put("type", "sms");
+        params.put("text", "인증번호는 [" + numStr + "] 입니다.");
+
+        coolsms.send(params); // 메시지 전송
+
+        return numStr;
+
+    }
+
 
 }
