@@ -9,7 +9,7 @@ import aug.laundry.dto.WebHook;
 import aug.laundry.enums.category.MemberShip;
 import aug.laundry.enums.category.Pass;
 import aug.laundry.service.LaundryService;
-import aug.laundry.service.OrdersService_kdh;
+import aug.laundry.service.OrdersService;
 import aug.laundry.service.PaymentService;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
@@ -40,16 +40,16 @@ public class PaymentController {
 
     private IamportClient iamportClient;
     private PaymentService paymentService;
-    private OrdersService_kdh ordersServiceKdh;
+    private OrdersService ordersServiceKdh;
     private PaymentDao paymentDao;
 
     private LaundryService laundryService;
 
     @Autowired
-    public PaymentController(PaymentService paymentService, OrdersService_kdh ordersService_kdh,
+    public PaymentController(PaymentService paymentService, OrdersService ordersService_,
                              PaymentDao paymentDao, LaundryService laundryService) {
         this.paymentService = paymentService;
-        this.ordersServiceKdh = ordersService_kdh;
+        this.ordersServiceKdh = ordersService_;
         this.paymentDao = paymentDao;
         this.laundryService = laundryService;
     }

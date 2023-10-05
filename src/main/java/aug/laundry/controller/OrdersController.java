@@ -7,7 +7,7 @@ import aug.laundry.enums.category.Delivery;
 import aug.laundry.enums.category.MemberShip;
 import aug.laundry.enums.category.Pass;
 import aug.laundry.service.LaundryService;
-import aug.laundry.service.OrdersService_kdh;
+import aug.laundry.service.OrdersService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -23,9 +23,9 @@ import static aug.laundry.commom.ConstOrderStatus.*;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/orders")
-public class OrdersController_kdh {
+public class OrdersController {
 
-    private final OrdersService_kdh ordersServiceKdh;
+    private final OrdersService ordersServiceKdh;
     private final LaundryService laundryService;
     private final MemberMapper memberMapper;
 

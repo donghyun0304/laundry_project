@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class OrdersService_kdh {
+public class OrdersService {
 
     private final OrdersDao ordersDao;
     private final PointDao pointDao;

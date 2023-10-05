@@ -4,14 +4,13 @@ import aug.laundry.dto.AdminInspectionDto;
 import aug.laundry.dto.Criteria;
 import aug.laundry.dto.InspectionDataDto;
 import aug.laundry.service.AdminInspectionService_ksh;
-import aug.laundry.service.OrdersService_kdh;
+import aug.laundry.service.OrdersService;
 import aug.laundry.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +28,7 @@ public class AdminInspectionController {
 
     private final AdminInspectionService_ksh adminInspectionService_ksh;
     private final PaymentService paymentService;
-    private final OrdersService_kdh ordersServiceKdh;
+    private final OrdersService ordersServiceKdh;
 
     @GetMapping("/admin/{adminId}")
     public String getInspectionView(@PathVariable("adminId") Long adminId) {
