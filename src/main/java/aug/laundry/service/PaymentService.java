@@ -31,7 +31,7 @@ public class PaymentService {
     private final PointDao pointDao;
     private final PaymentDao paymentDao;
     private final OrdersDao ordersDao;
-    private final OrdersService_kdh ordersServiceKdh;
+    private final OrdersService ordersServiceKdh;
     private final LaundryService laundryService;
 
 
