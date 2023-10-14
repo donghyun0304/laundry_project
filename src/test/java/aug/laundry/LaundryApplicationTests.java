@@ -10,4 +10,7 @@ class LaundryApplicationTests {
 	void contextLoads() {
 	}
 
+
+
+
 }

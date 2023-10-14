@@ -13,6 +13,8 @@ public class Point {
     private Long memberId;
     private Integer pointStack;
     private Integer pointNow;
+    private String pointStackReason;
+    private String pointStackDate;
 
     public Point() {
     }

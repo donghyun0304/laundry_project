@@ -10,7 +10,7 @@ import lombok.ToString;
 public class CommonLaundry {
 
     private Long commonLaundryId;
-    private Integer commonLaundryWeight;
+    private Double commonLaundryWeight;
     private Long ordersDetailId;
 
     public CommonLaundry() {

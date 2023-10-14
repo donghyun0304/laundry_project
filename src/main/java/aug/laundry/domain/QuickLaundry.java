@@ -12,6 +12,7 @@ public class QuickLaundry {
     private Long quickLaundryId;
     private String quickLaundryTakeDate;
     private Integer quickLaundryTakeTime;
+    private Long ordersDetailId;
 
     public QuickLaundry() {
     }
