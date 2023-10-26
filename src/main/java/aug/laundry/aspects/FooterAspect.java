@@ -45,7 +45,7 @@ public class FooterAspect {
         }
     }
 
-    @Before("execution(* aug.laundry.controller.OrdersController_kdh.*(..))")
+    @Before("execution(* aug.laundry.controller.OrdersController.*(..))")
     public void orderListAspect(JoinPoint joinPoint) {
         log.info("OrdersController Aspect Befor 실행 : {}", joinPoint.getSignature().getName());
 

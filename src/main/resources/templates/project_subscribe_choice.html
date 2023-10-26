@@ -106,8 +106,8 @@
                 name : productName,
                 amount : totalPrice, // 결제창에 표시될 금액. 실제 승인이 이루어지지는 않습니다. (모바일에서는 가격이 표시되지 않음)
                 customer_uid : memberId, // 필수 입력.
-                m_redirect_url : 'https://1cbc-183-96-143-101.ngrok-free.app/payments/mobile',
-                notice_url : 'https://1cbc-183-96-143-101.ngrok-free.app/repayments/webhook'
+                m_redirect_url : 'http://localhost:8080/payments/mobile',
+                notice_url : 'http://localhost:8080/repayments/webhook'
                 //m_redirect_url : 'http://localhost:8080/payments/mobile' // 모바일에서 결제 완료 후 리디렉션 될 URL 예: https://www.my-service.com/payments/complete/mobile
             }, function(rsp) {
                 if ( rsp.success ) {
