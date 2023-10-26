@@ -4,6 +4,7 @@ import net.nurigo.java_sdk.exceptions.CoolsmsException;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -24,6 +25,12 @@ public class SendSmsService_kgw {
 
     private static String timestamp = Long.toString(System.currentTimeMillis());
     private static String method = "POST";
+
+    @Value("${cool.sms.api}")
+    private String smsApi;
+
+    @Value("${cool.sms.api-secret}")
+    private String smsApiSecret;
 
 
     public String sendMassage(String phonenumber) throws Exception {
@@ -111,10 +118,10 @@ public class SendSmsService_kgw {
         return resultNum;
     }
 
-    public static String PhoneNumberCheck(String to) throws CoolsmsException {
+    public String PhoneNumberCheck(String to) throws CoolsmsException {
 
-        String api_key = "NCSOOIIA3GBBPHYM";
-        String api_secret = "IVTBRAJKJAGL4TNR8VTUFFFGAECHP4UI";
+        String api_key = smsApi;
+        String api_secret = smsApiSecret;
         Message coolsms = new Message(api_key, api_secret);
 
         Random rand  = new Random();

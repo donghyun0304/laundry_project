@@ -5,7 +5,7 @@
 
     <insert id="insert">
 
-        insert into QUICK_LAUNDRY ( QUICK_LAUNDRY_ID , QUICK_LAUNDRY_TAKE_DATE , QUICK_LAUNDRY_TATE_TIME , ORDERS_DETAIL_ID)
+        insert into QUICK_LAUNDRY ( QUICK_LAUNDRY_ID , QUICK_LAUNDRY_TAKE_DATE , QUICK_LAUNDRY_TAKE_TIME , ORDERS_DETAIL_ID)
         values(SEQ_QUICK_LAUNDRY_ID.nextval, #{quickLaundryTakeDate}, #{quickLaundryTakeTime}, #{ordersDetailId} )
 
     </insert>
